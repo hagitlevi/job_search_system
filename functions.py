@@ -1,4 +1,6 @@
 import os
+from classes import Candidate
+from colors import bcolors
 import pickle
 import classes
 #from classes import Candidate
@@ -13,10 +15,31 @@ def open_file_to_write(dictionary):
         print(f'Error with opening the file {e}')
     return
 
+def open_jobs_file_to_write(dictionary):
+    try:
+        with open("jobs.txt", "wb") as f:
+            pickle.dump(dictionary, f)
+    except FileNotFoundError:
+        print('File not found')
+    except Exception as e:
+        print(f'Error with opening the file {e}')
+    return
+
 def open_file_to_read():
     dictionary = {}
     try:
         with open("users.txt", "rb") as f:
+            dictionary = pickle.load(f)
+    except FileNotFoundError:
+        print('File not found')
+    except Exception as e:
+        print(f'Error with opening the file {e}')
+    return dictionary
+
+def open_jobs_file_to_read():
+    dictionary = {}
+    try:
+        with open("jobs.txt", "rb") as f:
             dictionary = pickle.load(f)
     except FileNotFoundError:
         print('File not found')
@@ -77,3 +100,25 @@ def check_city(city):
     if city in cities:
             return True
     return False
+
+def entrance():
+    """
+    log in or sign up to the system
+    :return: type of user
+    """
+    while True:
+        choice = int(input(bcolors.OKBLUE + 'choose an option: \n1. Log in \n2. Sign up\n'))
+        if choice == 1:
+            typ, username = log_in()
+            if typ is Candidate:
+                print('log in succeeded')
+                return 'Candidate', username
+            else:
+                print('log in succeeded')
+                return 'Employer', username
+
+        elif choice == 2:
+            typ, username = sign_up()
+            print('sign up succeeded')
+            return typ, username
+        print(bcolors.FAIL + 'Invalid input, Try again' + bcolors.ENDC)
