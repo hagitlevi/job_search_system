@@ -95,13 +95,6 @@ def log_in():
         else:
             print('Wrong username! Try again')
 
-def check_city(city):
-    text = "Afula Akko Arad Ariel Ashdod Ashkelon Bnei-Brak Bat-Yam Beersheba Beit-Shean Beit-Shemesh Beitar-Illit Bnei-Ayish Dimona Eilat Elad Givat-Shmuel Giv'atayim Hadera Haifa Harish Herzliya Holon Hoshaya Jerusalem Karmiel Kfar-Saba Kiryat-Ata Kiryat-Bialik Kiryat-Gat Kiryat-Malakhi Kiryat-Motzkin Kiryat-Ono Kiryat-Shmona Kiryat-Yam Lod Ma'alot-Tarshiha Ma'ale-Adumim Migdal-HaEmek Modiin-Illit Modiin-Maccabim-Reut Nahariya Nazareth Nazareth-Illit Ness-Ziona Netanya Netivot Ofakim Or-Akiva Or-Yehuda Petah-Tikva Raanana Ramat-Gan Ramat-Hasharon Ramla Rehovot Rishon-Lezion Rosh-HaAyin Safed Sakhnin Sderot Shoham Tamra Tayibe Tel-Aviv-Jaffa Tiberias Tirat-Carmel Umm-al-Fahm Yavne Yehud-Monosson Yokneam-Illit Zefat"
-    cities = text.split()
-    if city in cities:
-            return True
-    return False
-
 def entrance():
     """
     log in or sign up to the system
@@ -174,6 +167,12 @@ def view_my_jobs(username):
     if not found:
         print("No available jobs were found.")
 
+def check_city(city):
+    text = "Afula Akko Arad Ariel Ashdod Ashkelon Bnei-Brak Bat-Yam Beersheba Beit-Shean Beit-Shemesh Beitar-Illit Bnei-Ayish Dimona Eilat Elad Givat-Shmuel Giv'atayim Hadera Haifa Harish Herzliya Holon Hoshaya Jerusalem Karmiel Kfar-Saba Kiryat-Ata Kiryat-Bialik Kiryat-Gat Kiryat-Malakhi Kiryat-Motzkin Kiryat-Ono Kiryat-Shmona Kiryat-Yam Lod Ma'alot-Tarshiha Ma'ale-Adumim Migdal-HaEmek Modiin-Illit Modiin-Maccabim-Reut Nahariya Nazareth Nazareth-Illit Ness-Ziona Netanya Netivot Ofakim Or-Akiva Or-Yehuda Petah-Tikva Raanana Ramat-Gan Ramat-Hasharon Ramla Rehovot Rishon-Lezion Rosh-HaAyin Safed Sakhnin Sderot Shoham Tamra Tayibe Tel-Aviv-Jaffa Tiberias Tirat-Carmel Umm-al-Fahm Yavne Yehud-Monosson Yokneam-Illit Zefat"
+    cities = text.split()
+    if city in cities:
+            return True
+    return False
 
 def advanced_search():
     filters = []
@@ -201,9 +200,9 @@ def advanced_search():
         filters.append(bool(choose))
     return search(filters)
 
-
 def search(filters):
     filtered = [] # save all the jobs that match the filters
+    number = 1
     jobs = open_jobs_file_to_read()
     for user in jobs:
         for job in jobs[user]:
@@ -212,13 +211,47 @@ def search(filters):
                     if job.city == filtered[2] or filters[2] == '2':
                         if job.experience == filtered[3] or filters[3] == '2':
                             filtered.append(job.job_number)
-                            print(job)
+                            print({number}, job)
+                            number+=1
     return filtered
 
+def contact():
+    print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
+    choose = int(input('enter 1 to return to the main menu: '))
+    if choose == 1:
+        menu()
 
+def menu(): #need to finish
+    print('welcome to the main menu')
 
+common_issues = {
+    "1": ("I forgot my password", "To reset your password, click 'Forgot Password' on the login screen."),
+    "2": ("I can't edit my profile", "Go to 'Edit Profile' from the main menu and make sure to save your changes."),
+    "3": ("I can't post a job", "Make sure all required fields are filled in the 'Post Job' form, then click 'Publish'."),
+    "4": ("I can't see candidates", "Go to 'My Jobs' and click on 'View Candidates' for the relevant job."),
+    "5": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
+}
 
+def show_menu():
+    print("\nHow can we help you? Please choose a number:")
+    for key, (title, _) in common_issues.items():
+        print(f"{key}. {title}")
 
+def chatbot_loop():
+    while True:
+        show_menu()
+        choice = input(">> ").strip()
+
+        if choice in common_issues:
+            print("\n📌 Solution:")
+            print(common_issues[choice][1])
+
+            follow_up = input("\nWould you like help with another issue? (yes/no): ").strip().lower()
+            if follow_up != "yes":
+                print("Returning to the main menu. Thank you!")
+                break
+        else:
+            print("❗ Invalid choice. Please enter a number from the list.")
 
 
 
