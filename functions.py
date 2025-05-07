@@ -145,3 +145,31 @@ def generate_unique_random(min_val=1, max_val=1000000):
             return num
         attempts += 1
     raise Exception("Can not find a number in this range")
+
+def view_my_jobs(username):
+    """
+    Candidate views all available jobs in the system
+    :param username: candidate's username
+    :return: None
+    """
+    jobs_dict =open_jobs_file_to_read()
+    if not jobs_dict:
+        print("There are no jobs at the moment.")
+        return
+
+    print(bcolors.HEADER + f'\nAvailable jobs for candidate {username}:\n' + bcolors.ENDC)
+    found = False
+    for manager, job in jobs_dict.items():
+        print(bcolors.HEADER + f"Published by: {manager}" + bcolors.ENDC)
+        print(f"Profession: {job.name}")
+        print(f"City: {job.city}")
+        print(f"Salary Range: {job.salary_range}")
+        print(f"Job Type: {job.scope_job}")
+        print(f"Experience Required: {job.experience}")
+        print(f"Description: {job.description}")
+        print(f"Job number: {job.job_number}")
+        print("-" * 40)
+        found = True
+
+    if not found:
+        print("No available jobs were found.")
