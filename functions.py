@@ -77,6 +77,7 @@ def sign_up():
             print('Choose again')
 
     open_file_to_write(dict_)
+    print('Welcome! your registration has been successfully received')
     if choice == 1:
         return 'Employer', username
     return 'Candidate' , username
@@ -105,15 +106,12 @@ def entrance():
         if choice == 1:
             typ, username = log_in()
             if typ is Candidate:
-                print('log in succeeded')
                 return 'Candidate', username
             else:
-                print('log in succeeded')
                 return 'Employer', username
 
         elif choice == 2:
             typ, username = sign_up()
-            print('sign up succeeded')
             return typ, username
         print(bcolors.FAIL + 'Invalid input, Try again' + bcolors.ENDC)
 
@@ -253,6 +251,32 @@ def chatbot_loop():
         else:
             print("❗ Invalid choice. Please enter a number from the list.")
 
+def is_human_check():
+    num1 = random.randint(10, 99)
+    num2 = random.randint(10, 99)
+    operator = random.choice(['+', '-', '*'])
+
+    if operator == '+':
+        answer = num1 + num2
+    elif operator == '-':
+        answer = num1 - num2
+    elif operator == '*':
+        answer = num1 * num2
+
+    print("\n🔒 Human verification:")
+    print(f"What is {num1} {operator} {num2}?")
+
+    try:
+        user_input = int(input("Your answer: "))
+        if user_input == answer:
+            print("✅ Verified as human.\n")
+            return True
+        else:
+            print("❌ Incorrect. Access denied.")
+            return False
+    except ValueError:
+        print("❌ Invalid input. Access denied.")
+        return False
 
 
 
