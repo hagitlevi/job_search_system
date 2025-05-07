@@ -1,9 +1,10 @@
+import json
 import os
 from classes import Candidate
 from colors import bcolors
 import pickle
 import classes
-#from classes import Candidate
+import random
 
 def open_file_to_write(dictionary):
     try:
@@ -122,3 +123,25 @@ def entrance():
             print('sign up succeeded')
             return typ, username
         print(bcolors.FAIL + 'Invalid input, Try again' + bcolors.ENDC)
+
+def load_used_numbers():
+    if os.path.exists('numbers.txt'):
+        with open('numbers.txt', 'r') as f:
+            return set(json.load(f))
+    return set()
+
+def save_used_numbers(numbers):
+    with open('numbers.txt', 'w') as f:
+        json.dump(list(numbers), f)
+
+def generate_unique_random(min_val=1, max_val=1000000):
+    used = load_used_numbers()
+    attempts = 0
+    while attempts < 1000:
+        num = random.randint(min_val, max_val)
+        if num not in used:
+            used.add(num)
+            save_used_numbers(used)
+            return num
+        attempts += 1
+    raise Exception("Can not find a number in this range")

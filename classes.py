@@ -1,6 +1,5 @@
 import functions
 
-
 class Person:
     def __init__(self, user, password, full_name, age):
         self._user = user
@@ -102,6 +101,7 @@ class Job:
         self._scope_job = scope_job
         self._experience = experience
         self._description = description
+        self._job_number = functions.generate_unique_random()
 
     def __repr__(self):
         return (f"Job(manager={self._manager}, name={self._name}, city={self._city}, "
@@ -134,6 +134,10 @@ class Job:
     @property
     def description(self):
         return self._description
+
+    @property
+    def job_number(self):
+        return self._job_number
 
     @description.setter
     def description(self, description):
