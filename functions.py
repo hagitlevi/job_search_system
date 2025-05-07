@@ -174,17 +174,13 @@ def view_my_jobs(username):
     if not found:
         print("No available jobs were found.")
 
-def check_city(city):
-    text = "Afula Akko Arad Ariel Ashdod Ashkelon Bnei-Brak Bat-Yam Beersheba Beit-Shean Beit-Shemesh Beitar-Illit Bnei-Ayish Dimona Eilat Elad Givat-Shmuel Giv'atayim Hadera Haifa Harish Herzliya Holon Hoshaya Jerusalem Karmiel Kfar-Saba Kiryat-Ata Kiryat-Bialik Kiryat-Gat Kiryat-Malakhi Kiryat-Motzkin Kiryat-Ono Kiryat-Shmona Kiryat-Yam Lod Ma'alot-Tarshiha Ma'ale-Adumim Migdal-HaEmek Modiin-Illit Modiin-Maccabim-Reut Nahariya Nazareth Nazareth-Illit Ness-Ziona Netanya Netivot Ofakim Or-Akiva Or-Yehuda Petah-Tikva Raanana Ramat-Gan Ramat-Hasharon Ramla Rehovot Rishon-Lezion Rosh-HaAyin Safed Sakhnin Sderot Shoham Tamra Tayibe Tel-Aviv-Jaffa Tiberias Tirat-Carmel Umm-al-Fahm Yavne Yehud-Monosson Yokneam-Illit Zefat"
-    cities = text.split()
-    if city in cities:
-            return True
-    return False
 
 def advanced_search():
     filters = []
     print(bcolors.OKGREEN + 'you have entered advanced search\n' + bcolors.ENDC)
     print(bcolors.OKBLUE + 'choose your filters\n')
+    choose = input('enter your profession. press 2 to skip this filter: ')
+    filters.append(choose)
     choose = int(input('1. full time\n2. part time: '))
     if choose == 1:
         scope = True
@@ -193,8 +189,7 @@ def advanced_search():
     filters.append(scope)
     choose = input('choose your preferred city. press 2 to skip this filter: ')
     if choose == '2':
-        city = None
-        filters.append(city)
+        filters.append(choose)
     else:
         while check_city(city) is False:
             city = input(bcolors.FAIL + 'city is not found. please try again: ' + bcolors.ENDC)
@@ -204,7 +199,30 @@ def advanced_search():
         filters.append('2')
     else:
         filters.append(bool(choose))
-    choose = input('enter your profession. press 2 to skip this filter: ')
-    if choose == '2':
-        filters.append(choose)
-    filters.append(choose)
+    return search(filters)
+
+
+def search(filters):
+    filtered = [] # save all the jobs that match the filters
+    jobs = open_jobs_file_to_read()
+    for user in jobs:
+        for job in jobs[user]:
+            if job.name == filters[0] or filters[0] == '2':
+                if job.scope_job == filtered[1]:
+                    if job.city == filtered[2] or filters[2] == '2':
+                        if job.experience == filtered[3] or filters[3] == '2':
+                            filtered.append(job.job_number)
+                            print(job)
+    return filtered
+
+
+
+
+
+
+
+
+
+
+
+
