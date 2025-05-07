@@ -278,6 +278,26 @@ def is_human_check():
         print("❌ Invalid input. Access denied.")
         return False
 
+def human_check():
+    print("Before continuing, we need to make sure you're not a robot.")
+    print("Please answer the following question creatively:")
+
+    print("\n🌵 What would you do if you were a cactus in the desert?")
+    answer = input("> ")
+
+    if len(answer.strip().split()) < 5:
+        print("\n🤖 Hmm... that answer is a bit too short. Are you really human?")
+        return False
+
+    print("\n✅ That was weird enough to sound human. Welcome!")
+    return True
+
+
+# Example usage
+if human_check():
+    print("Access granted.")
+else:
+    print("Access denied.")
 
 
 
