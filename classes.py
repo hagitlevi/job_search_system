@@ -36,11 +36,13 @@ class Person:
     def password(self, password):
         self._password = password
 
-
 class Employer(Person):
     def __init__(self, user, password, full_name, age):
         super().__init__(user, password, full_name, age)
         self._my_posts = []
+
+    def __repr__(self):
+        return f'Employer(Name: {self._full_name} Age: {self._age})'
 
     def publish_job(self):
         dict_ = functions.open_jobs_file_to_read()
@@ -54,11 +56,27 @@ class Employer(Person):
         if not isinstance(self._my_posts, list):
             self._my_posts = []
         self._my_posts.append(job)
-        dict_[self.user] = job
+        dict_[self.user] = self._my_posts
         functions.open_jobs_file_to_write(dict_)
 
-    def __repr__(self):
-        return f'Employer(Name: {self._full_name} Age: {self._age})'
+    def delete_job(self):
+        dict_ = functions.open_jobs_file_to_read()
+        dict_users = functions.open_file_to_read()
+        flag = False
+        number = input('Enter the number of that specific job(you can see it by choose "view my jobs" in your menu')
+        for job in self._my_posts:
+            if job.job_number == number:
+                flag = True
+                self._my_posts = self._my_posts.remove(job)
+                break
+        if not flag:
+            print("Can not find this job")
+            return False
+        dict_[self.user] = self._my_posts
+        dict_users[self.user] = self
+        functions.open_file_to_write(dict_users)
+        functions.open_jobs_file_to_write(dict_)
+        return True
 
     @property
     def my_posts(self):
@@ -69,7 +87,6 @@ class Employer(Person):
         if not isinstance(my_posts, list):
             raise ValueError("my_posts must be a list")
         self._my_posts = my_posts
-
 
 class Candidate(Person):
     def __init__(self, user, password, full_name, age):
@@ -162,3 +179,4 @@ class Job:
     @city.setter
     def city(self, city):
         self._city = city
+
