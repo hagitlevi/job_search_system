@@ -227,7 +227,7 @@ def menu(): #need to finish
 common_issues = {
     "1": ("I forgot my password", "To reset your password, click 'Forgot Password' on the login screen."),
     "2": ("I can't edit my profile", "Go to 'Edit Profile' from the main menu and make sure to save your changes."),
-    "3": ("I can't post a job", "Make sure all required fields are filled in the 'Post Job' form, then click 'Publish'."),
+    "3": ("I can't post a job", "Make sure all required fields are filled in the 'Post Job' form, then click for Publish."),
     "4": ("I can't see candidates", "Go to 'My Jobs' and click on 'View Candidates' for the relevant job."),
     "5": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
 }
