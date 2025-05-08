@@ -347,8 +347,153 @@ def strong_password():
             return True
         print('The password is not strong enough, Try  again')
 
+def view_submission_history(username):
+    """
+    Displays the submission history of a candidate.
+    :param username: candidate's username
+    """
+    if not os.path.exists("jobs.pkl"):
+        print("No job data found.")
+        return
 
+    with open("jobs.pkl", "rb") as f:
+        try:
+            all_jobs = pickle.load(f)
+        except EOFError:
+            print("No job data found.")
+            return
+
+    submissions = []
+    for job in all_jobs:
+        for candidate in job.applicants:
+            if candidate.username == username:
+                submissions.append((job.title, job.company_name))
+
+    if not submissions:
+        print("You have not submitted any job applications yet.")
+    else:
+        print("Your submission history:")
+        for i, (title, company) in enumerate(submissions, 1):
+            print(f"{i}. {title} at {company}")
+
+
+def check_candidate_messages():
+    forum_file = "forum.pkl"
+
+    if not os.path.exists(forum_file):
+        print("No forum messages found.")
+        return
+
+    with open(forum_file, "rb") as file:
+        try:
+            messages = pickle.load(file)
+        except EOFError:
+            print("Forum is currently empty.")
+            return
+
+    if not messages:
+        print("Forum is currently empty.")
+    else:
+        print("Candidate Forum Messages")
+        for idx, message in enumerate(messages, start=1):
+            print(f"{idx}. {message}")
+
+#TIPS
+def get_resume_tips():
+    tips = [
+        "1. Use clear and concise language to describe your skills and experience.",
+        "2. Tailor your resume to the job you're applying for by highlighting relevant skills.",
+        "3. Include quantifiable achievements (e.g., 'increased sales by 20%').",
+        "4. Keep the layout clean, with a clear hierarchy of information.",
+        "5. Proofread your resume to avoid any grammatical or spelling errors."
+    ]
+    print("\nHere are some tips for writing your resume:")
+    for tip in tips:
+        print(tip)
+def view_salary_table():
+    salary_table = {
+        "Software Developer": "80,000 - 120,000 USD",
+        "Data Scientist": "70,000 - 110,000 USD",
+        "Project Manager": "60,000 - 100,000 USD",
+        "UX Designer": "50,000 - 85,000 USD"
+    }
+    print("\nSalary Range for Various Jobs:")
+    for job, salary in salary_table.items():
+        print(f"{job}: {salary}")
+def view_forum():
+    print("\nEnter the community forum for job seekers to consult and share tips:")
+    print("Forum link: www.jobseekerforum.com")
+def candidate_tools():
+    while True:
+        print("\nCandidate Tools:")
+        print("1. Get Tips for Writing Your Resume")
+        print("2. View Salary Table")
+        print("3. Visit Community Forum")
+        print("4. Return to Main Menu")
+
+        choice = input("Choose an option (1/2/3/4): ")
+        if choice == "1":
+            get_resume_tips()
+        elif choice == "2":
+            view_salary_table()
+        elif choice == "3":
+            view_forum()
+        elif choice == "4":
+            print("Returning to the main menu...")
+            break
+        else:
+            print("Invalid choice. Please choose 1, 2, 3, or 4.")
+
+
+def search_jobs():
+    # Read jobs from the file
+    jobs = open_jobs_file_to_read("jobs.txt")
+    if not jobs:
+        print("No jobs available at the moment.")
+        return
+
+    filtered_jobs = []
+
+    # Get user input
+    profession = input("Enter your profession (or press Enter to skip): ").strip()
+    while True:
+        scope = input("Enter job type (1 for Full-time, 2 for Part-time, or press Enter to skip): ").strip()
+        if scope in ("1", "2", ""):
+            break
+        print("Invalid input. Please enter 1, 2, or press Enter to skip.")
+    while True:
+        city = input("Enter your preferred city (or press Enter to skip): ").strip()
+        if city == "":
+            break
+        print("City not found. Please try again.")
+    while True:
+        experience = input("Do you prefer jobs that require experience? (y/n or press Enter to skip): ").strip().lower()
+        if experience in ("y", "n", ""):
+            break
+        print("Invalid input. Please enter 'y', 'n', or press Enter to skip.")
+
+    # Convert inputs to required types
+    scope = True if scope == "1" else False if scope == "2" else None
+    experience = True if experience == "y" else False if experience == "n" else None
+
+    # Search for jobs matching the criteria
+    job_number = 1
+    for user_jobs in jobs.values():
+        for job in user_jobs:
+            if (not profession or job.name == profession) and \
+                    (scope is None or job.scope_job == scope) and \
+                    (not city or job.city == city) and \
+                    (experience is None or job.experience == experience):
+                filtered_jobs.append(job)
+                print(f"Job {job_number}: {job.name}")
+                print(f"Location: {job.city}, Type: {'Full Time' if job.scope_job else 'Part Time'}")
+                print(f"Experience Required: {'Yes' if job.experience else 'No'}")
+                print(f"Salary: {job.salary}")
+                print("-" * 40)
+                job_number += 1
+
+    if not filtered_jobs:
+        print("No jobs found matching your criteria.")
 
 
 print('test')
-
