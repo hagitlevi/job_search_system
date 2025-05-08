@@ -179,34 +179,38 @@ def advanced_search():
     filters.append(choose)
     choose = int(input('1. full time\n2. part time: '))
     if choose == 1:
-        scope = True
-    else:
-        scope = False
-    filters.append(scope)
+        choose = 'full time'
+    elif choose == 2:
+        choose = 'part time'
+    filters.append(choose)
     choose = input('choose your preferred city. press 2 to skip this filter: ')
     if choose == '2':
         filters.append(choose)
     else:
+        city = choose
         while check_city(city) is False:
             city = input(bcolors.FAIL + 'city is not found. please try again: ' + bcolors.ENDC)
         filters.append(city)
-    choose = int(input('do you prefer jobs that require experience?\n0 - NO\n1 - YES\n2 - skip: '))
+    choose = input('do you prefer jobs that require experience?\n no/yea/2 - skip: ')
     filters.append(choose)
     return search(filters)
 
 def search(filters):
-    filtered = [] # save all the jobs that match the filters
+    filtered = []  # save all the jobs that match the filters
     number = 1
     jobs = open_jobs_file_to_read()
     for user in jobs:
         for job in jobs[user]:
             if job.name == filters[0] or filters[0] == '2':
-                if job.scope_job == filtered[1]:
-                    if job.city == filtered[2] or filters[2] == '2':
-                        if job.experience == bool(filtered[3]) or filters[3] == '2':
+                if job.scope_job == filters[1]:
+                    if job.city == filters[2] or filters[2] == '2':
+                        if job.experience == filters[3] or filters[3] == '2':
                             filtered.append(job.job_number)
-                            print({number}, job)
-                            number+=1
+                            print(number, ": ")
+                            job.print_details()
+                            number += 1
+    if number == 1:
+        print('jobs not found')
     return filtered
 
 def contact():
