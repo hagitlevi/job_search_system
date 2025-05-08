@@ -191,10 +191,7 @@ def advanced_search():
             city = input(bcolors.FAIL + 'city is not found. please try again: ' + bcolors.ENDC)
         filters.append(city)
     choose = int(input('do you prefer jobs that require experience?\n0 - NO\n1 - YES\n2 - skip: '))
-    if choose == 2:
-        filters.append('2')
-    else:
-        filters.append(bool(choose))
+    filters.append(choose)
     return search(filters)
 
 def search(filters):
@@ -206,7 +203,7 @@ def search(filters):
             if job.name == filters[0] or filters[0] == '2':
                 if job.scope_job == filtered[1]:
                     if job.city == filtered[2] or filters[2] == '2':
-                        if job.experience == filtered[3] or filters[3] == '2':
+                        if job.experience == bool(filtered[3]) or filters[3] == '2':
                             filtered.append(job.job_number)
                             print({number}, job)
                             number+=1
