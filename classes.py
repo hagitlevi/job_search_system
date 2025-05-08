@@ -65,7 +65,9 @@ class Employer(Person):
         dict_users = functions.open_file_to_read()
         my_jobs = dict_[self.user]
         flag = False
-        number = input('Enter the number of that specific job(you can see it by choose "view my jobs" in your menu')
+        number = input('Enter the number of that specific job(you can see it by choose "view my jobs" in your menu)\n 🔙Press enter to go back')
+        if not number:
+            return 1
         for job in my_jobs:
             if job.job_number == number:
                 flag = True
