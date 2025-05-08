@@ -1,5 +1,6 @@
 import functions
 
+
 class Person:
     def __init__(self, user, password, full_name, age):
         self._user = user
@@ -62,12 +63,13 @@ class Employer(Person):
     def delete_job(self):
         dict_ = functions.open_jobs_file_to_read()
         dict_users = functions.open_file_to_read()
+        my_jobs = dict_[self.user]
         flag = False
         number = input('Enter the number of that specific job(you can see it by choose "view my jobs" in your menu')
-        for job in self._my_posts:
+        for job in my_jobs:
             if job.job_number == number:
                 flag = True
-                self._my_posts = self._my_posts.remove(job)
+                self._my_posts = my_jobs.remove(job)
                 break
         if not flag:
             print("Can not find this job")
@@ -77,6 +79,61 @@ class Employer(Person):
         functions.open_file_to_write(dict_users)
         functions.open_jobs_file_to_write(dict_)
         return True
+
+    def edit_job(self):
+        jobs = functions.open_jobs_file_to_read()
+        my_jobs = jobs[self.user]
+        if not my_jobs:
+            print("You have no jobs to edit.")
+            return
+
+        job_number_ = int(input("Enter the job number of the job you want to edit (you can see it by choose 'view my jobs' in your menu'): "))
+        job_to_edit = None
+
+        for job in my_jobs:
+            if job.job_number == job_number_:
+                job_to_edit = job
+                my_jobs.remove(job)
+                break
+
+        if not job_to_edit:
+            print("Job not found.")
+            return
+
+        print("Current name:", job_to_edit.name)
+        new_name = input("Enter new name (press Enter to keep current): ")
+        if new_name:
+            job_to_edit.name = new_name
+
+        print("Current city:", job_to_edit.city)
+        new_city = input("Enter new city (press Enter to keep current): ")
+        if new_city:
+            job_to_edit.city = new_city
+
+        print("Current salary range:", job_to_edit.salary_range)
+        new_salary_range = input("Enter new salary range (press Enter to keep current): ")
+        if new_salary_range:
+            job_to_edit.salary_range = new_salary_range
+
+        print("Current scope (full/part time):", job_to_edit.scope_job)
+        new_scope_job = input("Enter new scope (press Enter to keep current): ")
+        if new_scope_job:
+            job_to_edit.scope_job = new_scope_job
+
+        print("Current experience requirement:", job_to_edit.experience)
+        new_experience = input("Enter new experience requirement (press Enter to keep current): ")
+        if new_experience:
+            job_to_edit.experience = new_experience
+
+        print("Current description:", job_to_edit.description)
+        new_description = input("Enter new description (press Enter to keep current): ")
+        if new_description:
+            job_to_edit.description = new_description
+
+        my_jobs.append(job_to_edit)
+        jobs[self.user] = my_jobs
+        functions.open_jobs_file_to_write(jobs)
+        print("Job updated successfully.")
 
     @property
     def my_posts(self):
@@ -124,6 +181,16 @@ class Job:
         return (f"Job(manager={self._manager}, name={self._name}, city={self._city}, "
                 f"salary_range={self._salary_range}, scope_job={self._scope_job}, "
                 f"experience={self._experience}, description={self._description})")
+
+    def print_details(self):
+        print(f"Manager: {self._manager}")
+        print(f"Name: {self._name}")
+        print(f"City: {self._city}")
+        print(f"Salary Range: {self._salary_range}")
+        print(f"Job Type: {self._scope_job}")
+        print(f"Experience Required: {self._experience}")
+        print(f"Description: {self._description}")
+
     @property
     def name(self):
         return self._name
