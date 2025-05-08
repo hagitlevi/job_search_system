@@ -1,6 +1,5 @@
 import json
 import os
-
 import private
 from classes import Candidate
 from colors import bcolors
@@ -433,24 +432,27 @@ def candidate_tools():
         print("1. Get Tips for Writing Your Resume")
         print("2. View Salary Table")
         print("3. Visit Community Forum")
-        print("4. Return to Main Menu")
+        print("4. 🔙Back")
 
-        choice = input("Choose an option (1/2/3/4): ")
-        if choice == "1":
-            get_resume_tips()
-        elif choice == "2":
-            view_salary_table()
-        elif choice == "3":
-            view_forum()
-        elif choice == "4":
-            print("Returning to the main menu...")
-            break
-        else:
-            print("Invalid choice. Please choose 1, 2, 3, or 4.")
+        choice = input()
+        match choice:
+            case "1":
+                get_resume_tips()
+                input('🔙Press enter to go back \n')
+            case "2":
+                view_salary_table()
+                input('🔙Press enter to go back \n')
+            case "3":
+                view_forum()
+                input('🔙Press enter to go back \n')
+            case "4":
+                break
+            case _:
+                print("Invalid choice. Please choose 1, 2, 3, or 4.")
 
 def search_jobs():
     # Read jobs from the file
-    jobs = open_jobs_file_to_read("jobs.txt")
+    jobs = open_jobs_file_to_read()
     if not jobs:
         print("No jobs available at the moment.")
         return
