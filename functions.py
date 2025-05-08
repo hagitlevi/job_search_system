@@ -175,43 +175,97 @@ def advanced_search():
     filters = []
     print(bcolors.OKGREEN + 'you have entered advanced search\n' + bcolors.ENDC)
     print(bcolors.OKBLUE + 'choose your filters\n')
-    choose = input('enter your profession. press 2 to skip this filter: ')
-    filters.append(choose)
+
+    profession = input('Enter your profession (or type "skip"): ')
+    filters.append(profession if profession != '2' else 'skip')
+
     choose = int(input('1. full time\n2. part time: '))
-    if choose == 1:
-        choose = 'full time'
-    elif choose == 2:
-        choose = 'part time'
-    filters.append(choose)
-    choose = input('choose your preferred city. press 2 to skip this filter: ')
-    if choose == '2':
-        filters.append(choose)
+    filters.append('full time' if choose == 1 else 'part time')
+
+    city = input('Choose your preferred city (or type "skip"): ')
+    if city.lower() == 'skip' or city == '2':
+        filters.append('skip')
     else:
-        city = choose
-        while check_city(city) is False:
-            city = input(bcolors.FAIL + 'city is not found. please try again: ' + bcolors.ENDC)
+        while not check_city(city):
+            city = input(bcolors.FAIL + 'City not found. Please try again: ' + bcolors.ENDC)
         filters.append(city)
-    choose = input('do you prefer jobs that require experience?\n no/yea/2 - skip: ')
-    filters.append(choose)
+
+    exp = input('Do you prefer jobs that require experience? (yes/no/skip): ').lower()
+    if exp not in ['yes', 'no']:
+        exp = 'skip'
+    filters.append(exp)
+
     return search(filters)
 
+
 def search(filters):
-    filtered = []  # save all the jobs that match the filters
+    filtered = []
     number = 1
     jobs = open_jobs_file_to_read()
+
     for user in jobs:
         for job in jobs[user]:
-            if job.name == filters[0] or filters[0] == '2':
-                if job.scope_job == filters[1]:
-                    if job.city == filters[2] or filters[2] == '2':
-                        if job.experience == filters[3] or filters[3] == '2':
+            if filters[0].lower() == 'skip' or job.name.lower() == filters[0].lower():
+                if job.scope_job.lower() == filters[1].lower():
+                    if filters[2].lower() == 'skip' or job.city.lower() == filters[2].lower():
+                        if filters[3].lower() == 'skip' or job.experience.lower() == filters[3].lower():
                             filtered.append(job.job_number)
-                            print(number, ": ")
+                            print(f"{number}: ")
                             job.print_details()
                             number += 1
+
     if number == 1:
         print('jobs not found')
-    return filtered
+    return apply_for_job(filtered)
+
+
+def apply_for_job(filtered):
+    job_index = int(input('Choose the job number you want to apply for: '))
+    if job_index > len(filtered) or job_index < 1:
+        print('Invalid job selection. Please choose a valid job number.')
+        return False
+
+    selected_job_number = filtered[job_index - 1]
+
+    jobs = open_jobs_file_to_read()
+    users = open_file_to_read()
+
+    current_user = input("Enter your username: ")  # Ensure the correct user is identified
+    if current_user not in users:
+        print("User not found in the system.")
+        return False
+
+    user = users[current_user]
+    if not isinstance(user, Candidate):
+        print("Only candidates can apply for jobs.")
+        return False
+
+    for job_owner in jobs:
+        for job_ in jobs[job_owner]:
+            if job_.job_number == selected_job_number:
+                if hasattr(user, 'applied_jobs') and selected_job_number in user.applied_jobs:
+                    print('You have already applied for this job')
+                    return False
+                else:
+                    if not hasattr(user, 'applied_jobs'):
+                        user.applied_jobs = []  # Initialize if not present
+                    user.applied_jobs.append(selected_job_number)
+
+                    # Attach the resume to the application
+                    if user.resume:
+                        print(f"Your resume has been attached to the application:\n{user.resume}")
+                    else:
+                        print("No resume found in your profile. Application submitted without a resume.")
+
+                    print('You have successfully applied for the job')
+                    open_jobs_file_to_write(jobs)
+                    open_file_to_write(users)
+                    return True
+
+    print("Job number not found in the system.")
+    return False
+
+
 
 def contact():
     print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
