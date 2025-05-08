@@ -152,6 +152,7 @@ class Candidate(Person):
         super().__init__(user, password, full_name, age)
         self._resume = None
         self._my_sub = None
+        self.applied_jobs = []
 
     def __repr__(self):
         return f'Candidate(Name: {self._full_name} Age: {self._age})'
