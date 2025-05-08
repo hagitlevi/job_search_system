@@ -1,5 +1,7 @@
 import json
 import os
+
+import private
 from classes import Candidate
 from colors import bcolors
 import pickle
@@ -58,7 +60,7 @@ def sign_up():
             if username in dict_:
                 raise KeyError('try to creat a username that does not exist')
             else:
-                password = input('Password: ')
+                password = strong_password()
                 break
         except KeyError as e:
             print(f'{e}, Try again')
@@ -90,9 +92,14 @@ def log_in():
             password = input('Password: ')
             user = dict_[username]
             if password != user.password:
-                print('Wrong password!')
+                print('Wrong password! Press Enter to try again')
+                num = input('Forgot password? (Press 1): ').strip()
+                if num == '1':  # Compare as a string
+                    private.change_password(username)
+                elif num == '':
+                    continue  # Restart the loop to re-enter the password
             else:
-                return type(dict_[username]), username
+                return type(user), username
         else:
             print('Wrong username! Try again')
 
@@ -197,7 +204,6 @@ def advanced_search():
 
     return search(filters)
 
-
 def search(filters):
     filtered = []
     number = 1
@@ -217,7 +223,6 @@ def search(filters):
     if number == 1:
         print('jobs not found')
     return apply_for_job(filtered)
-
 
 def apply_for_job(filtered):
     job_index = int(input('Choose the job number you want to apply for: '))
@@ -264,8 +269,6 @@ def apply_for_job(filtered):
 
     print("Job number not found in the system.")
     return False
-
-
 
 def contact():
     print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
@@ -343,9 +346,9 @@ def human_check():
 def strong_password():
     while True:
         password = input('Password: ')
-        if len(password) >=8 and any(c.isupper() for c in password):
-            return True
-        print('The password is not strong enough, Try  again')
+        if len(password) >=8 and any(c.isupper() or c.lower() for c in password):
+            return password
+        print('The password is not strong enough(at least 8 characters and one letter)')
 
 def view_submission_history(username):
     """
@@ -376,7 +379,6 @@ def view_submission_history(username):
         for i, (title, company) in enumerate(submissions, 1):
             print(f"{i}. {title} at {company}")
 
-
 def check_candidate_messages():
     forum_file = "forum.pkl"
 
@@ -398,7 +400,6 @@ def check_candidate_messages():
         for idx, message in enumerate(messages, start=1):
             print(f"{idx}. {message}")
 
-#TIPS
 def get_resume_tips():
     tips = [
         "1. Use clear and concise language to describe your skills and experience.",
@@ -410,6 +411,7 @@ def get_resume_tips():
     print("\nHere are some tips for writing your resume:")
     for tip in tips:
         print(tip)
+
 def view_salary_table():
     salary_table = {
         "Software Developer": "80,000 - 120,000 USD",
@@ -420,9 +422,11 @@ def view_salary_table():
     print("\nSalary Range for Various Jobs:")
     for job, salary in salary_table.items():
         print(f"{job}: {salary}")
+
 def view_forum():
     print("\nEnter the community forum for job seekers to consult and share tips:")
     print("Forum link: www.jobseekerforum.com")
+
 def candidate_tools():
     while True:
         print("\nCandidate Tools:")
@@ -443,7 +447,6 @@ def candidate_tools():
             break
         else:
             print("Invalid choice. Please choose 1, 2, 3, or 4.")
-
 
 def search_jobs():
     # Read jobs from the file
@@ -496,4 +499,3 @@ def search_jobs():
         print("No jobs found matching your criteria.")
 
 
-print('test')
