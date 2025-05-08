@@ -320,10 +320,10 @@ def is_human_check():
             print("✅ Verified as human.\n")
             return True
         else:
-            print("❌ Incorrect. Access denied.")
+            print("❌ Incorrect. Try again.")
             return False
     except ValueError:
-        print("❌ Invalid input. Access denied.")
+        print("❌ Invalid input. Try again.")
         return False
 
 def human_check():
@@ -340,7 +340,12 @@ def human_check():
     print("\n✅ That was weird enough to sound human. Welcome!")
     return True
 
-
+def strong_password():
+    while True:
+        password = input('Password: ')
+        if len(password) >=8 and any(c.isupper() for c in password):
+            return True
+        print('The password is not strong enough, Try  again')
 
 
 
