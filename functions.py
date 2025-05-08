@@ -144,21 +144,20 @@ def view_my_jobs(username):
     :return: None
     """
     jobs_dict =open_jobs_file_to_read()
+    my_jobs = jobs_dict[username]
     if not jobs_dict:
         print("There are no jobs at the moment.")
         return
 
-    print(bcolors.HEADER + f'\nAvailable jobs for candidate {username}:\n' + bcolors.ENDC)
     found = False
-    for manager, job in jobs_dict.items():
-        print(bcolors.HEADER + f"Published by: {manager}" + bcolors.ENDC)
+    for i, job in enumerate(my_jobs):
+        print(f"Job number: {job.job_number}")
         print(f"Profession: {job.name}")
         print(f"City: {job.city}")
         print(f"Salary Range: {job.salary_range}")
         print(f"Job Type: {job.scope_job}")
         print(f"Experience Required: {job.experience}")
         print(f"Description: {job.description}")
-        print(f"Job number: {job.job_number}")
         print("-" * 40)
         found = True
 
@@ -215,12 +214,6 @@ def search(filters):
 
 def contact():
     print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
-    choose = int(input('enter 1 to return to the main menu: '))
-    if choose == 1:
-        menu()
-
-def menu(): #need to finish
-    print('welcome to the main menu')
 
 common_issues = {
     "1": ("I forgot my password", "To reset your password, click 'Forgot Password' on the login screen."),
@@ -293,11 +286,7 @@ def human_check():
     return True
 
 
-# Example usage
-if human_check():
-    print("Access granted.")
-else:
-    print("Access denied.")
+
 
 
 
