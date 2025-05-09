@@ -128,7 +128,7 @@ elif typ == 'Employer':
                         case "":
                             break
                         case _:
-                            print('Invalid option. Please choose a number between 1 and 6')
+                            print('Invalid option. Please choose a number between 1 and 5')
             case "3":
                 print('Notifications...')
                 input('🔙Press enter to go back \n')

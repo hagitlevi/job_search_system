@@ -467,6 +467,7 @@ def candidate_tools():
             case _:
                 print("Invalid choice. Please choose 1, 2, 3, or 4.")
 
+
 def search_jobs():
     # Read jobs from the file
     jobs = open_jobs_file_to_read()
@@ -474,29 +475,31 @@ def search_jobs():
         print("No jobs available at the moment.")
         return
 
-    filtered_jobs = []
+    # Ask for job number first
+    job_number_filter = input("Enter job number (or press Enter to skip): ").strip()
+    if job_number_filter:
+        for user_jobs in jobs.values():
+            for job in user_jobs:
+                if str(job.job_number) == job_number_filter:
+                    print("Job found:")
+                    job.print_details()
+                    print("-" * 40)
+                    return
+        print("No job found with the given job number.")
+        return
 
-    # Get user input
+    # Proceed to other filters if no job number is provided
+    filtered_jobs = []
     profession = input("Enter your profession (or press Enter to skip): ").strip()
     while True:
         scope = input("Enter job type (1 for Full-time, 2 for Part-time, or press Enter to skip): ").strip()
         if scope in ("1", "2", ""):
             break
         print("Invalid input. Please enter 1, 2, or press Enter to skip.")
-    while True:
-        city = input("Enter your preferred city (or press Enter to skip): ").strip()
-        if city == "":
-            break
-        print("City not found. Please try again.")
-    while True:
-        experience = input("Do you prefer jobs that require experience? (y/n or press Enter to skip): ").strip().lower()
-        if experience in ("y", "n", ""):
-            break
-        print("Invalid input. Please enter 'y', 'n', or press Enter to skip.")
+    city = input("Enter your preferred city (or press Enter to skip): ").strip()
 
     # Convert inputs to required types
-    scope = True if scope == "1" else False if scope == "2" else None
-    experience = True if experience == "y" else False if experience == "n" else None
+    scope = "full time" if scope == "1" else "part time" if scope == "2" else None
 
     # Search for jobs matching the criteria
     job_number = 1
@@ -504,17 +507,12 @@ def search_jobs():
         for job in user_jobs:
             if (not profession or job.name == profession) and \
                     (scope is None or job.scope_job == scope) and \
-                    (not city or job.city == city) and \
-                    (experience is None or job.experience == experience):
+                    (not city or job.city == city):
                 filtered_jobs.append(job)
-                print(f"Job {job_number}: {job.name}")
-                print(f"Location: {job.city}, Type: {'Full Time' if job.scope_job else 'Part Time'}")
-                print(f"Experience Required: {'Yes' if job.experience else 'No'}")
-                print(f"Salary: {job.salary}")
+                print(f"Job {job_number}:")
+                job.print_details()
                 print("-" * 40)
                 job_number += 1
 
     if not filtered_jobs:
         print("No jobs found matching your criteria.")
-
-
