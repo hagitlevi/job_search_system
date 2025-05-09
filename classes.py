@@ -186,7 +186,7 @@ class Job:
                 f"experience={self._experience}, description={self._description})")
 
     def print_details(self):
-        print(f"Manager: {self._manager}")
+        print(f"Job number: {self._job_number}")
         print(f"Name: {self._name}")
         print(f"City: {self._city}")
         print(f"Salary Range: {self._salary_range}")

@@ -48,7 +48,8 @@ if typ == 'Candidate':
             case "3":
                 while True:
                     job = functions.advanced_search()
-                    job.print_deatails()
+                    if job != 1 and job == True:
+                        job.print_deatails()
                     print('Do you want to search job again? (Press 1)')
                     back = input('🔙Press enter to go back \n')
                     if not back:

@@ -190,16 +190,20 @@ def advanced_search():
 
     profession = input('Enter your profession (or type "skip"): ')
     filters.append(profession if profession != '2' else 'skip')
-
-    choose = int(input('1. full time\n2. part time: '))
-    filters.append('full time' if choose == 1 else 'part time')
+    while True:
+        try:
+            choose = int(input('1. full time\n2. part time: '))
+            filters.append('full time' if choose == 1 else 'part time')
+            break
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
 
     city = input('Choose your preferred city (or type "skip"): ')
     if city.lower() == 'skip' or city == '2':
         filters.append('skip')
     else:
-        while not check_city(city):
-            city = input(bcolors.FAIL + 'City not found. Please try again: ' + bcolors.ENDC)
+        #while not check_city(city):
+            #city = input(bcolors.FAIL + 'City not found. Please try again: ' + bcolors.ENDC)
         filters.append(city)
 
     exp = input('Do you prefer jobs that require experience? (yes/no/skip): ').lower()
@@ -227,14 +231,21 @@ def search(filters):
 
     if number == 1:
         print('jobs not found')
+        return 1
     return apply_for_job(filtered)
 
 def apply_for_job(filtered):
-    job_index = int(input('Choose the job number you want to apply for: '))
-    if job_index > len(filtered) or job_index < 1:
-        print('Invalid job selection. Please choose a valid job number.')
-        return False
-
+    job_index = 0
+    while True:
+        job_index_ = input('Choose the job number you want to apply for(Press enter to exit): ')
+        if not job_index_:
+            return False
+        elif int(job_index_) > len(filtered) or int(job_index_) < 1:
+            print('Invalid job selection. Please choose a valid job number.')
+        else:
+            job_index = int(job_index_)
+            break
+    print(job_index)
     selected_job_number = filtered[job_index - 1]
 
     jobs = open_jobs_file_to_read()
