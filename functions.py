@@ -29,6 +29,9 @@ def open_jobs_file_to_write(dictionary):
 
 def open_file_to_read():
     dictionary = {}
+    if not os.path.exists("users.txt"):
+        with open("users.txt", "wb") as f:
+            return dictionary
     try:
         with open("users.txt", "rb") as f:
             dictionary = pickle.load(f)
@@ -40,6 +43,9 @@ def open_file_to_read():
 
 def open_jobs_file_to_read():
     dictionary = {}
+    if not os.path.exists("jobs.txt"):
+        with open("jobs.txt", "wb") as f:
+            pickle.dump(dictionary, f)
     try:
         with open("jobs.txt", "rb") as f:
             dictionary = pickle.load(f)
