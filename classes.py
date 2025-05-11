@@ -1,5 +1,6 @@
 import functions
-
+from colors import bcolors
+from datetime import datetime
 
 class Person:
     def __init__(self, user, password, full_name, age):
@@ -47,13 +48,19 @@ class Employer(Person):
 
     def publish_job(self):
         dict_ = functions.open_jobs_file_to_read()
+        self._my_posts = dict_[self.user]
+        date_ = datetime.now()
         name = input('Profession name: ')
         city = input('City: ')
         salary_range = input('Salary range: ')
-        scope_job = input('Full/part time job: ')
+        while True:
+            scope_job = input('Full/part time job: ')
+            if scope_job.lower() in ['full time', 'part time']:
+                break
+            print('Enter scope like that way: "full time" / "part time"')
         experience = input('Requirement experience: ')
         description = input('Job description: ')
-        job = Job(self.user, name, city, salary_range, scope_job, experience, description)
+        job = Job(self.user, name, city, salary_range, scope_job, experience, description, date_)
         if not isinstance(self._my_posts, list):
             self._my_posts = []
         self._my_posts.append(job)
@@ -63,6 +70,9 @@ class Employer(Person):
     def delete_job(self):
         dict_ = functions.open_jobs_file_to_read()
         dict_users = functions.open_file_to_read()
+        if not self.user in dict_:
+            print('There are no jobs to delete')
+            return False
         my_jobs = dict_[self.user]
         flag = False
         number = input('Enter the number of that specific job(you can see it by choose "view my jobs" in your menu)\n 🔙Press enter to go back')
@@ -154,10 +164,10 @@ class Employer(Person):
             print(f"{idx + 1}. Candidate: {candidate.full_name}, Job: {job.name}, Status: Pending")
 
         while True:
-            print("\nChoose an option:")
-            print("1. Update status")
-            print("2. View candidate profile")
-            print("🔙Press enter to go back")
+            print(bcolors.CYAN + bcolors.UNDERLINE + "\nChoose an option:" + bcolors.ENDC)
+            print(bcolors.CYAN + '1.' + bcolors.ENDC + "Update status")
+            print(bcolors.CYAN + '2.' + bcolors.ENDC + "View candidate profile")
+            print(bcolors.CYAN + "🔙Press enter to go back" + bcolors.ENDC)
             choice = input().strip()
 
             if not choice:
@@ -267,7 +277,7 @@ class Candidate(Person):
         self._resume = resume
 
 class Job:
-    def __init__(self, manager, name, city, salary_range, scope_job, experience, description):
+    def __init__(self, manager, name, city, salary_range, scope_job, experience, description, date):
         self._manager = manager
         self._name = name
         self._city = city
@@ -276,6 +286,7 @@ class Job:
         self._experience = experience
         self._description = description
         self._job_number = functions.generate_unique_random()
+        self._date = date
 
     def __repr__(self):
         return (f"Job(manager={self._manager}, name={self._name}, city={self._city}, "

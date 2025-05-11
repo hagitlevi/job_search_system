@@ -206,7 +206,7 @@ def check_city(city):
             return True
     return False
 
-def advanced_search():
+def advanced_search(user):
     filters = []
     print('you have entered advanced search\n')
     print('choose your filters\n')
@@ -234,12 +234,15 @@ def advanced_search():
         exp = 'skip'
     filters.append(exp)
 
-    return search(filters)
+    return search(filters, user)
 
-def search(filters):
+def search(filters, user_):
     filtered = []
     number = 1
     jobs = open_jobs_file_to_read()
+
+    # Ask the user if they want to sort by date
+    sort_by_date = input("Would you like to sort the results by date? (yes/no): ").strip().lower()
 
     for user in jobs:
         for job in jobs[user]:
@@ -247,26 +250,34 @@ def search(filters):
                 if job.scope_job.lower() == filters[1].lower():
                     if filters[2].lower() == 'skip' or job.city.lower() == filters[2].lower():
                         if filters[3].lower() == 'skip' or job.experience.lower() == filters[3].lower():
-                            filtered.append(job.job_number)
-                            print(f"{number}: ")
-                            job.print_details()
-                            number += 1
+                            filtered.append(job)
 
-    if number == 1:
-        print('jobs not found')
+    # Sort the filtered jobs by date if the user chose to do so
+    if sort_by_date == 'yes':
+        filtered.sort(key=lambda job: job._date)
+
+    # Display the results
+    if not filtered:
+        print('Jobs not found')
         return 1
-    return apply_for_job(filtered)
 
-def apply_for_job(filtered):
+    for job in filtered:
+        print(f"{number}: ")
+        job.print_details()
+        number += 1
+
+    return apply_for_job([job.job_number for job in filtered], user_)
+
+def apply_for_job(filtered, user):
     dict_ = {}
     dict_ = open_applications_file_to_read()
     job_index = 0
     while True:
-        job_index_ = input('Choose the job number you want to apply for(Press enter to exit): ')
+        job_index_ = input('Choose the job index you want to apply for(Press enter to exit): ')
         if not job_index_:
             return False
         elif int(job_index_) > len(filtered) or int(job_index_) < 1:
-            print('Invalid job selection. Please choose a valid job number.')
+            print('Invalid job selection. Please choose a valid job index.')
         else:
             job_index = int(job_index_)
             break
@@ -275,17 +286,6 @@ def apply_for_job(filtered):
     jobs = open_jobs_file_to_read()
     users = open_file_to_read()
     manager = job = 0
-
-
-    current_user = input("Enter your username: ")  # Ensure the correct user is identified
-    if current_user not in users:
-        print("User not found in the system.")
-        return False
-
-    user = users[current_user]
-    if not isinstance(user, Candidate):
-        print("Only candidates can apply for jobs.")
-        return False
 
     for job_owner in jobs:
         for job_ in jobs[job_owner]:
@@ -296,8 +296,6 @@ def apply_for_job(filtered):
                     print('You have already applied for this job')
                     return False
                 else:
-                    if not hasattr(user, 'applied_jobs'):
-                        user.applied_jobs = []  # Initialize if not present
                     user.applied_jobs.append(selected_job_number)
 
                     # Attach the resume to the application
@@ -321,6 +319,31 @@ def apply_for_job(filtered):
 
     print("Job number not found in the system.")
     return False
+
+
+"""
+def search(filters):
+    filtered = []
+    number = 1
+    jobs = open_jobs_file_to_read()
+    
+    for user in jobs:
+        for job in jobs[user]:
+            if filters[0].lower() == 'skip' or job.name.lower() == filters[0].lower():
+                if job.scope_job.lower() == filters[1].lower():
+                    if filters[2].lower() == 'skip' or job.city.lower() == filters[2].lower():
+                        if filters[3].lower() == 'skip' or job.experience.lower() == filters[3].lower():
+                            filtered.append(job.job_number)
+                            print(f"{number}: ")
+                            job.print_details()
+                            number += 1
+
+    if number == 1:
+        print('jobs not found')
+        return 1
+    return apply_for_job(filtered)
+"""
+
 
 def contact():
     print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')

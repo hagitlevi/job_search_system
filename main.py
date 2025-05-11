@@ -47,7 +47,7 @@ if typ == 'Candidate':
                     input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
             case "3":
                 while True:
-                    job = functions.advanced_search()
+                    job = functions.advanced_search(obj)
                     if job != 1 and job == True:
                         job.print_deatails()
                     print('Do you want to search job again? (Press 1)')
@@ -60,7 +60,7 @@ if typ == 'Candidate':
                 print("Starting personal test...")
                 input(bcolors.CYAN + '🔙Press enter to go back \n'+ bcolors.ENDC)
             case "6":
-                print("Launching help bot...")
+                functions.chatbot_loop()
                 input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
             case "7":
                 functions.contact()
