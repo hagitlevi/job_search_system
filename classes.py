@@ -137,6 +137,76 @@ class Employer(Person):
         functions.open_jobs_file_to_write(jobs)
         print("Job updated successfully.")
 
+    def messages(self):
+        applications_dict = functions.open_applications_file_to_read()
+
+        if self.user not in applications_dict or not applications_dict[self.user]:
+            print("There are no job applications at the moment")
+            return
+        user_applications = [app for app in applications_dict[self.user] if app[0] is None]
+        if not user_applications:
+            print("There are no pending job applications at the moment")
+            return
+
+        print("Pending job applications:")
+        for idx, application in enumerate(user_applications):
+            status, job, candidate = application
+            print(f"{idx + 1}. Candidate: {candidate.full_name}, Job: {job.name}, Status: Pending")
+
+        while True:
+            print("\nChoose an option:")
+            print("1. Update status")
+            print("2. View candidate profile")
+            print("🔙Press enter to go back")
+            choice = input().strip()
+
+            if not choice:
+                return
+            elif choice == "1":
+                try:
+                    idx = int(input("Select the application number you want to update: "))
+                    if idx < 1 or idx > len(user_applications):
+                        print('Invalid option. Please choose a valid number')
+                        continue
+
+                    print('choose an option:')
+                    print('1. acceptance')
+                    print('2. rejection')
+                    print('3. pending')
+                    while True:
+                        new_status = int(input().strip())
+                        if new_status in [1, 2, 3]:
+                            break
+                        print("Enter a valid number(1, 2 or 3)")
+
+
+                    new_status = True if new_status == 1 else False if new_status == 2 else None
+                    user_applications[idx - 1][0] = new_status
+                    applications_dict[self.user] = user_applications
+
+                    functions.open_applications_jobs_file_to_write(applications_dict)
+                    print("The status updated successfully")
+                    break
+                except ValueError:
+                    print("Invalid input")
+            elif choice == "2":
+                try:
+                    idx = int(input("Select the request number whose profile you want to view: "))
+                    if idx < 1 or idx > len(user_applications):
+                        print("Invalid input")
+                        continue
+
+                    _, _, candidate = user_applications[idx - 1]
+                    print("Candidate details:")
+                    print(f"Full name: {candidate.full_name}")
+                    print(f"Age: {candidate.age}")
+                    print(f"Resume: {candidate.resume if candidate.resume else 'No resume uploaded'}")
+                    input("🔙Press enter to go back")
+                except ValueError:
+                    print("Invalid input")
+            else:
+                print("Invalid input. Enter 1, 2 or enter")
+
     @property
     def my_posts(self):
         return self._my_posts
@@ -151,23 +221,46 @@ class Candidate(Person):
     def __init__(self, user, password, full_name, age):
         super().__init__(user, password, full_name, age)
         self._resume = None
-        self._my_sub = None
         self.applied_jobs = []
 
     def __repr__(self):
         return f'Candidate(Name: {self._full_name} Age: {self._age})'
 
+    def view_my_jobs(self):
+        # Load submissions data from the file
+        submissions_dict = functions.open_applications_file_to_read()
+
+        # Initialize a list to store the candidate's submissions
+        my_submissions = []
+
+        # Iterate through the submissions dictionary
+        for employer, applications in submissions_dict.items():
+            for application in applications:
+                status, job, candidate = application
+                if candidate.user == self.user:
+                    my_submissions.append((status, job))
+
+        # Check if the candidate has any submissions
+        if not my_submissions:
+            print("You have not submitted any job applications.")
+            return
+
+        # Print the candidate's submissions
+        print("Your job applications:")
+        for status, job in my_submissions:
+            # Print job details
+            job.print_details()
+            # Print status in bold
+            status_text = (
+                "\033[1mAccepted\033[0m" if status is True else
+                "\033[1mRejected\033[0m" if status is False else
+                "\033[1mPending\033[0m"
+            )
+            print(f"Status: {status_text}\n")
+
     @property
     def resume(self):
         return self._resume
-
-    @property
-    def my_sub(self):
-        return self._my_sub
-
-    @my_sub.setter
-    def my_sub(self, my_sub):
-        self._my_sub = my_sub
 
     @resume.setter
     def resume(self, resume):
