@@ -6,6 +6,29 @@ from colors import bcolors
 import pickle
 import classes
 import random
+def open_applications_file_to_read():
+    dictionary = {}
+    if not os.path.exists("applications.txt"):
+        with open("applications.txt", "wb") as f:
+            return dictionary
+    try:
+        with open("applications.txt", "rb") as f:
+            dictionary = pickle.load(f)
+    except FileNotFoundError:
+        print('File not found')
+    except Exception as e:
+        print(f'Error with opening the file {e}')
+    return dictionary
+
+def open_applications_jobs_file_to_write(dictionary):
+    try:
+        with open("applications.txt", "wb") as f:
+            pickle.dump(dictionary, f)
+    except FileNotFoundError:
+        print('File not found')
+    except Exception as e:
+        print(f'Error with opening the file {e}')
+    return
 
 def open_file_to_write(dictionary):
     try:
@@ -245,11 +268,12 @@ def apply_for_job(filtered):
         else:
             job_index = int(job_index_)
             break
-    print(job_index)
     selected_job_number = filtered[job_index - 1]
 
     jobs = open_jobs_file_to_read()
     users = open_file_to_read()
+    manager = job = 0
+
 
     current_user = input("Enter your username: ")  # Ensure the correct user is identified
     if current_user not in users:
@@ -264,6 +288,8 @@ def apply_for_job(filtered):
     for job_owner in jobs:
         for job_ in jobs[job_owner]:
             if job_.job_number == selected_job_number:
+                manager = job_owner
+                job = job_
                 if hasattr(user, 'applied_jobs') and selected_job_number in user.applied_jobs:
                     print('You have already applied for this job')
                     return False
@@ -275,12 +301,18 @@ def apply_for_job(filtered):
                     # Attach the resume to the application
                     if user.resume:
                         print(f"Your resume has been attached to the application:\n{user.resume}")
+                        return True
                     else:
-                        print("No resume found in your profile. Application submitted without a resume.")
-
+                        resume = input('Type your resume:\n')
+                        user.resume = resume
                     print('You have successfully applied for the job')
-                    open_jobs_file_to_write(jobs)
+                    #open_jobs_file_to_write(jobs)
                     open_file_to_write(users)
+                    dict_ = {}
+                    dict_ = open_applications_file_to_read()
+                    arr = [None, job, user]
+                    dict_.setdefault(manager, []).append(arr)
+                    open_applications_jobs_file_to_write(dict_)
                     return True
 
     print("Job number not found in the system.")
@@ -466,7 +498,6 @@ def candidate_tools():
                 break
             case _:
                 print("Invalid choice. Please choose 1, 2, 3, or 4.")
-
 
 def search_jobs():
     # Read jobs from the file

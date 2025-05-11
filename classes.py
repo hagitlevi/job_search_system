@@ -169,6 +169,10 @@ class Candidate(Person):
     def my_sub(self, my_sub):
         self._my_sub = my_sub
 
+    @resume.setter
+    def resume(self, resume):
+        self._resume = resume
+
 class Job:
     def __init__(self, manager, name, city, salary_range, scope_job, experience, description):
         self._manager = manager
@@ -250,4 +254,3 @@ class Job:
     def city(self, city):
         self._city = city
 
-print('test2')
