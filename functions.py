@@ -137,7 +137,7 @@ def entrance():
     :return: type of user
     """
     while True:
-        choice = int(input(bcolors.OKBLUE + 'choose an option: \n1. Log in \n2. Sign up\n'))
+        choice = int(input('choose an option: \n1. Log in \n2. Sign up\n'))
         if choice == 1:
             typ, username = log_in()
             if typ is Candidate:
@@ -208,8 +208,8 @@ def check_city(city):
 
 def advanced_search():
     filters = []
-    print(bcolors.OKGREEN + 'you have entered advanced search\n' + bcolors.ENDC)
-    print(bcolors.OKBLUE + 'choose your filters\n')
+    print('you have entered advanced search\n')
+    print('choose your filters\n')
 
     profession = input('Enter your profession (or type "skip"): ')
     filters.append(profession if profession != '2' else 'skip')
@@ -258,6 +258,8 @@ def search(filters):
     return apply_for_job(filtered)
 
 def apply_for_job(filtered):
+    dict_ = {}
+    dict_ = open_applications_file_to_read()
     job_index = 0
     while True:
         job_index_ = input('Choose the job number you want to apply for(Press enter to exit): ')
@@ -301,6 +303,10 @@ def apply_for_job(filtered):
                     # Attach the resume to the application
                     if user.resume:
                         print(f"Your resume has been attached to the application:\n{user.resume}")
+                        arr = [None, job, user]
+                        dict_.setdefault(manager, []).append(arr)
+                        open_applications_jobs_file_to_write(dict_)
+
                         return True
                     else:
                         resume = input('Type your resume:\n')
@@ -308,8 +314,6 @@ def apply_for_job(filtered):
                     print('You have successfully applied for the job')
                     #open_jobs_file_to_write(jobs)
                     open_file_to_write(users)
-                    dict_ = {}
-                    dict_ = open_applications_file_to_read()
                     arr = [None, job, user]
                     dict_.setdefault(manager, []).append(arr)
                     open_applications_jobs_file_to_write(dict_)
@@ -477,23 +481,23 @@ def view_forum():
 
 def candidate_tools():
     while True:
-        print("\nCandidate Tools:")
-        print("1. Get Tips for Writing Your Resume")
-        print("2. View Salary Table")
-        print("3. Visit Community Forum")
-        print("4. 🔙Back")
+        print(bcolors.CYAN + bcolors.UNDERLINE + "\nCandidate Tools:" + bcolors.ENDC)
+        print(bcolors.CYAN + '2.' + bcolors.ENDC + "Get Tips for Writing Your Resume")
+        print(bcolors.CYAN + '2.' + bcolors.ENDC + "View Salary Table")
+        print(bcolors.CYAN + '2.' + bcolors.ENDC + "Visit Community Forum")
+        print(bcolors.CYAN + '2.' + bcolors.ENDC + "🔙Back")
 
         choice = input()
         match choice:
             case "1":
                 get_resume_tips()
-                input('🔙Press enter to go back \n')
+                input(bcolors.CYAN +'🔙Press enter to go back \n'+ bcolors.ENDC)
             case "2":
                 view_salary_table()
-                input('🔙Press enter to go back \n')
+                input(bcolors.CYAN +'🔙Press enter to go back \n' + bcolors.ENDC)
             case "3":
                 view_forum()
-                input('🔙Press enter to go back \n')
+                input(bcolors.CYAN +'🔙Press enter to go back \n' + bcolors.ENDC)
             case "4":
                 break
             case _:
