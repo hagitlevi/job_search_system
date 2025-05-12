@@ -694,3 +694,91 @@ def change_password(username):
     open_file_to_write(users)
 
     print("Password changed successfully.")
+
+def edit_employer_profile(username):
+    users = open_file_to_read()
+
+    if username not in users or not isinstance(users[username], classes.Employer):
+        print("Employer not found.")
+        return
+
+    employer = users[username]
+
+    print("Current full name:", employer.full_name)
+    new_name = input("Enter new full name (press Enter to keep current): ")
+    if new_name:
+        employer.full_name = new_name
+
+    print("Current age:", employer.age)
+    try:
+        new_age = input("Enter new age (press Enter to keep current): ")
+        if new_age:
+            employer.age = int(new_age)
+    except ValueError:
+        print("Invalid age input. Keeping current age.")
+
+    print("Current password:", employer.password)
+    while True:
+        password = input("Enter new password. At least 8 characters and one letter(press Enter to keep current): ")
+        if not password:
+            break
+        if len(password) >=8 and any(c.isalpha() for c in password):
+            employer.password = password
+            break
+
+    users[username] = employer
+    open_file_to_write(users)
+    print("Employer profile updated successfully.")
+
+def delete_profile(username):
+    users = open_file_to_read()
+
+    if username not in users:
+        print("User not found.")
+        return False
+
+    confirmation = input(f"Are you sure you want to delete the profile for '{username}'? (yes/no): ")
+    if confirmation.lower() != 'yes':
+        print("Profile deletion cancelled.")
+        return False
+
+    del users[username]
+    open_file_to_write(users)
+    print(f"Profile for '{username}' has been deleted.")
+    return exit()
+
+def edit_candidate_profile(username):
+    users = open_file_to_read()
+
+    if username not in users or not isinstance(users[username], classes.Candidate):
+        print("Candidate not found.")
+        return
+
+    candidate = users[username]
+
+    print("Current full name:", candidate.full_name)
+    new_name = input("Enter new full name (press Enter to keep current): ")
+    if new_name:
+        candidate.full_name = new_name
+
+    print("Current age:", candidate.age)
+    try:
+        new_age = input("Enter new age (press Enter to keep current): ")
+        if new_age:
+            candidate.age = int(new_age)
+    except ValueError:
+        print("Invalid age input. Keeping current age.")
+
+    print("Current password:", candidate.password)
+    while True:
+        password = input("Enter new password. At least 8 characters and one letter(press Enter to keep current): ")
+        if not password:
+            break
+        if len(password) >=8 and any(c.isalpha() for c in password):
+            candidate.password = password
+            break
+
+    users[username] = candidate
+    open_file_to_write(users)
+    print("Candidate profile updated successfully.")
+
