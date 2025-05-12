@@ -1,5 +1,6 @@
 from colors import bcolors
 import functions
+import sys
 
 #The system output:
 print(bcolors.UNDERLINE + bcolors.BRIGHT_MAGENTA + 'Welcome To Hire Scope System' + bcolors.ENDC)
@@ -49,6 +50,7 @@ if typ == 'Candidate':
                     job = functions.advanced_search(obj)
                     if job != 1 and job == True:
                         job.print_deatails()
+                    sys.stdin.flush()
                     print('Do you want to search job again? (Press 1)')
                     back = input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                     if not back:
@@ -123,7 +125,7 @@ elif typ == 'Employer':
                             functions.view_my_jobs(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "5":
-                            functions.search_jobs()
+                            functions.search_jobs(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "":
                             break

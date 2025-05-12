@@ -1,5 +1,8 @@
 import json
 import os
+import sys
+from sys import flags
+
 from classes import Candidate
 from colors import bcolors
 import pickle
@@ -112,6 +115,7 @@ def sign_up():
     return 'Candidate' , username
 
 def log_in():
+
     while True:
         username = input('Username: ')
         dict_ = open_file_to_read()
@@ -136,19 +140,21 @@ def entrance():
     :return: type of user
     """
     while True:
-        choice = int(input('choose an option: \n1. Log in \n2. Sign up\n'))
-        if choice == 1:
-            typ, username = log_in()
-            if typ is Candidate:
-                return 'Candidate', username
-            else:
-                return 'Employer', username
+        try:
+            choice = int(input(bcolors.CYAN + bcolors.UNDERLINE + 'choose an option:' + bcolors.ENDC + bcolors.CYAN + '\n1.' + bcolors.ENDC + 'Log in' + bcolors.CYAN + '\n2.' + bcolors.ENDC + 'Sign up\n'))
+            if choice == 1:
+                typ, username = log_in()
+                if typ is Candidate:
+                    return 'Candidate', username
+                else:
+                    return 'Employer', username
 
-        elif choice == 2:
-            typ, username = sign_up()
-            return typ, username
-        print(bcolors.FAIL + 'Invalid input, Try again' + bcolors.ENDC)
-
+            elif choice == 2:
+                typ, username = sign_up()
+                return typ, username
+            print('Invalid input, Try again')
+        except ValueError:
+            print('Invalid input, Try again')
 def load_used_numbers():
     if os.path.exists('numbers.txt'):
         with open('numbers.txt', 'r') as f:
@@ -178,12 +184,19 @@ def view_my_jobs(username):
     :return: None
     """
     jobs_dict =open_jobs_file_to_read()
-    my_jobs = jobs_dict[username]
-    if not jobs_dict:
-        print("There are no jobs at the moment.")
+    if username not in jobs_dict:
+        print("You have not applied for any jobs.")
         return
+    my_jobs = jobs_dict[username]
+    while True:
+        choice = input('Would you like to sort the jobs by date? (yes/ no/ press enter to skip): ')
+        if choice in ['yes', 'no', '']:
+            break
+        print("Invalid input. Please type 'yes', 'no', or press Enter to skip.")
 
-    found = False
+    if choice == 'yes':
+        my_jobs = sorted(my_jobs, key=lambda job: job._date, reverse=True)
+
     for i, job in enumerate(my_jobs):
         print(f"Job number: {job.job_number}")
         print(f"Profession: {job.name}")
@@ -192,11 +205,10 @@ def view_my_jobs(username):
         print(f"Job Type: {job.scope_job}")
         print(f"Experience Required: {job.experience}")
         print(f"Description: {job.description}")
+        print(f"Date Posted: {job._date}")
         print("-" * 40)
-        found = True
 
-    if not found:
-        print("No available jobs were found.")
+
 
 def check_city(city):
     text = "Afula Akko Arad Ariel Ashdod Ashkelon Bnei-Brak Bat-Yam Beersheba Beit-Shean Beit-Shemesh Beitar-Illit Bnei-Ayish Dimona Eilat Elad Givat-Shmuel Giv'atayim Hadera Haifa Harish Herzliya Holon Hoshaya Jerusalem Karmiel Kfar-Saba Kiryat-Ata Kiryat-Bialik Kiryat-Gat Kiryat-Malakhi Kiryat-Motzkin Kiryat-Ono Kiryat-Shmona Kiryat-Yam Lod Ma'alot-Tarshiha Ma'ale-Adumim Migdal-HaEmek Modiin-Illit Modiin-Maccabim-Reut Nahariya Nazareth Nazareth-Illit Ness-Ziona Netanya Netivot Ofakim Or-Akiva Or-Yehuda Petah-Tikva Raanana Ramat-Gan Ramat-Hasharon Ramla Rehovot Rishon-Lezion Rosh-HaAyin Safed Sakhnin Sderot Shoham Tamra Tayibe Tel-Aviv-Jaffa Tiberias Tirat-Carmel Umm-al-Fahm Yavne Yehud-Monosson Yokneam-Illit Zefat"
@@ -207,32 +219,26 @@ def check_city(city):
 
 def advanced_search(user):
     filters = []
-    print('you have entered advanced search\n')
-    print('choose your filters\n')
+    print(bcolors.UNDERLINE + 'you have entered advanced search\n' + bcolors.ENDC)
+    print('choose your filters')
 
-    profession = input('Enter your profession (or type "skip"): ')
-    filters.append(profession if profession != '2' else 'skip')
+    profession = input('Enter your profession (Press enter to skip): ')
+    filters.append(profession if profession != '' else 'skip')
     while True:
         try:
-            choose = int(input('1. full time\n2. part time: '))
+            choose = int(input('1. full time\n2. part time '))
             filters.append('full time' if choose == 1 else 'part time')
             break
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
-    city = input('Choose your preferred city (or type "skip"): ')
-    if city.lower() == 'skip' or city == '2':
+    city = input('Choose your preferred city (Press enter to skip): ')
+    if city == '':
         filters.append('skip')
     else:
-        #while not check_city(city):
-            #city = input(bcolors.FAIL + 'City not found. Please try again: ' + bcolors.ENDC)
         filters.append(city)
-
-    exp = input('Do you prefer jobs that require experience? (yes/no/skip): ').lower()
-    if exp not in ['yes', 'no']:
-        exp = 'skip'
+    exp = 'skip'
     filters.append(exp)
-
     return search(filters, user)
 
 def search(filters, user_):
@@ -241,7 +247,11 @@ def search(filters, user_):
     jobs = open_jobs_file_to_read()
 
     # Ask the user if they want to sort by date
-    sort_by_date = input("Would you like to sort the results by date? (yes/no): ").strip().lower()
+    while True:
+        sort_by_date = input("Would you like to sort the results by date? (yes/no): ").strip().lower()
+        if sort_by_date in ['yes', 'no']:
+            break
+        print('Invalid input. Type yes/no')
 
     for user in jobs:
         for job in jobs[user]:
@@ -253,16 +263,19 @@ def search(filters, user_):
 
     # Sort the filtered jobs by date if the user chose to do so
     if sort_by_date == 'yes':
-        filtered.sort(key=lambda job: job._date)
+        filtered.sort(key=lambda job: job._date, reverse=True)
 
     # Display the results
     if not filtered:
         print('Jobs not found')
         return 1
-
+    print("-" * 40)
     for job in filtered:
-        print(f"{number}: ")
+        print(bcolors.CYAN + f"{number}: " + bcolors.ENDC)
         job.print_details()
+        if sort_by_date == 'yes':  # Display the date if sorted by date
+            print(f"Date Posted: {job._date}")
+        print("-" * 40)
         number += 1
 
     return apply_for_job([job.job_number for job in filtered], user_)
@@ -272,7 +285,7 @@ def apply_for_job(filtered, user):
     dict_ = open_applications_file_to_read()
     job_index = 0
     while True:
-        job_index_ = input('Choose the job index you want to apply for(Press enter to exit): ')
+        job_index_ = input('\nChoose the job index you want to apply for(Press enter to exit): ')
         if not job_index_:
             return False
         elif int(job_index_) > len(filtered) or int(job_index_) < 1:
@@ -525,54 +538,103 @@ def candidate_tools():
             case _:
                 print("Invalid choice. Please choose 1, 2, 3, or 4.")
 
-def search_jobs():
+def search_jobs(username):
     # Read jobs from the file
     jobs = open_jobs_file_to_read()
     if not jobs:
         print("No jobs available at the moment.")
         return
 
-    # Ask for job number first
-    job_number_filter = input("Enter job number (or press Enter to skip): ").strip()
-    if job_number_filter:
-        for user_jobs in jobs.values():
-            for job in user_jobs:
-                if str(job.job_number) == job_number_filter:
-                    print("Job found:")
-                    job.print_details()
-                    print("-" * 40)
-                    return
-        print("No job found with the given job number.")
-        return
-
-    # Proceed to other filters if no job number is provided
-    filtered_jobs = []
-    profession = input("Enter your profession (or press Enter to skip): ").strip()
     while True:
-        scope = input("Enter job type (1 for Full-time, 2 for Part-time, or press Enter to skip): ").strip()
-        if scope in ("1", "2", ""):
+        print(bcolors.CYAN + bcolors.UNDERLINE + 'Choose an option' + bcolors.ENDC)
+        print(bcolors.CYAN + "1." + bcolors.ENDC + 'Search by job number')
+        print(bcolors.CYAN + "2." + bcolors.ENDC + 'Search by job characteristics')
+        print(bcolors.CYAN + "3." + bcolors.ENDC + 'search by date')
+        print(bcolors.CYAN + '4.' + bcolors.ENDC + 'sort by date')
+        print(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
+        cho = input()
+        if not cho:
+            return
+
+        if cho == '1':
+            job_number_filter = input("Enter job number: ").strip()
+            if job_number_filter:
+                for user_jobs in jobs.values():
+                    for job in user_jobs:
+                        if str(job.job_number) == job_number_filter:
+                            print("Job found:")
+                            job.print_details()
+                            print("-" * 40)
+                            break
+                print("No job found with the given job number.")
+                break
+        elif cho == '2':  # Handle search by job characteristics
+            filtered_jobs = []
+            sys.stdin.flush()
+            profession = input("Enter your profession (or press Enter to skip): ").strip()
+            while True:
+                scope = input("Enter job type (1 for Full-time, 2 for Part-time, or press Enter to skip): ").strip()
+                if scope in ("1", "2", ""):
+                    break
+                print("Invalid input. Please enter 1, 2, or press Enter to skip.")
+            city = input("Enter your preferred city (or press Enter to skip): ").strip()
+
+            # Convert inputs to required types
+            scope = "full time" if scope == "1" else "part time" if scope == "2" else None
+
+            # Search for jobs matching the criteria
+            job_number = 1
+            for user_jobs in jobs.values():
+                for job in user_jobs:
+                    if (not profession or job.name == profession) and \
+                            (scope is None or job.scope_job == scope) and \
+                            (not city or job.city == city):
+                        filtered_jobs.append(job)
+                        print(f"Job {job_number}:")
+                        job.print_details()
+                        print("-" * 40)
+                        job_number += 1
+
+            if not filtered_jobs:
+                print("No jobs found matching your criteria.")
             break
-        print("Invalid input. Please enter 1, 2, or press Enter to skip.")
-    city = input("Enter your preferred city (or press Enter to skip): ").strip()
-
-    # Convert inputs to required types
-    scope = "full time" if scope == "1" else "part time" if scope == "2" else None
-
-    # Search for jobs matching the criteria
-    job_number = 1
-    for user_jobs in jobs.values():
-        for job in user_jobs:
-            if (not profession or job.name == profession) and \
-                    (scope is None or job.scope_job == scope) and \
-                    (not city or job.city == city):
-                filtered_jobs.append(job)
-                print(f"Job {job_number}:")
+        elif cho == '3':
+            flag = False
+            date = input("Enter the date (YYYY-MM-DD): ").strip()
+            if date:
+                for user_jobs in jobs.values():
+                    for job in user_jobs:
+                        if str(job._date.date()) == date:
+                            flag = True
+                            print("Job found:")
+                            job.print_details()
+                            print("-" * 40)
+            if not flag:
+                print("No job found with the given date.")
+            break
+        elif cho == '4':
+            if username not in jobs or not jobs[username]:
+                print("No jobs found.")
+                break
+            my_jobs = jobs[username]
+            my_jobs = sorted(jobs[username], key=lambda job: job._date, reverse=True)
+            flag = False
+            for job in my_jobs:
+                flag = True
+                print(f"Date Posted: {job._date.date()}")
                 job.print_details()
                 print("-" * 40)
-                job_number += 1
+            if not flag:
+                print("No job found.")
+            break
+        print('Invalid input. Please choose 1,2,3,4 or enter.')
+    sys.stdin.flush()
+    p = input('Press 0 for refreshing all the jobs (enter for skip): ')
+    if p == '':
+        return
+    if int(p) == 0:
+        print_user_jobs(username)
 
-    if not filtered_jobs:
-        print("No jobs found matching your criteria.")
 
 traits = {
     "analytical": 0,
@@ -781,3 +843,19 @@ def edit_candidate_profile(username):
     open_file_to_write(users)
     print("Candidate profile updated successfully.")
 
+def print_user_jobs(username):
+    """
+    Prints all the jobs available for a specific user.
+    :param username: The username of the user whose jobs are to be printed.
+    """
+    jobs_dict = open_jobs_file_to_read()  # Read the jobs from the file
+
+    if username not in jobs_dict or not jobs_dict[username]:
+        print(f"No jobs available for the user '{username}'.")
+        return
+
+    print(f"Jobs for user '{username}':")
+    print("-" * 40)
+    for job in jobs_dict[username]:
+        job.print_details()
+        print("-" * 40)
