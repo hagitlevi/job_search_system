@@ -667,3 +667,30 @@ def show_result():
     print("Other profession scores:")
     for job, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
         print(f"{job}: {score}")
+
+def change_password(username):
+    users = open_file_to_read()
+    print("Verify details:")
+    username_ = input("Enter your username: ")
+
+    if username_ != username:
+        print("Error!\n")
+        return
+    current_age = users[username].age
+    age = input("Enter your age: ")
+    if int(age) != current_age:
+        print("Error!\n")
+        return
+    user = users[username]
+    new_password = input("Enter your new password: ")
+    confirm_password = input("Confirm your new password: ")
+
+    if new_password != confirm_password:
+        print("Passwords do not match.")
+        return
+
+    user.password = new_password
+    users[username] = user
+    open_file_to_write(users)
+
+    print("Password changed successfully.")
