@@ -1,6 +1,5 @@
 import json
 import os
-import private
 from classes import Candidate
 from colors import bcolors
 import pickle
@@ -123,7 +122,7 @@ def log_in():
                 print('Wrong password! Press Enter to try again')
                 num = input('Forgot password? (Press 1): ').strip()
                 if num == '1':  # Compare as a string
-                    private.change_password(username)
+                     change_password(username)
                 elif num == '':
                     continue  # Restart the loop to re-enter the password
             else:

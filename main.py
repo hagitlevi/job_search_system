@@ -1,6 +1,5 @@
 from colors import bcolors
 import functions
-import private
 
 #The system output:
 print(bcolors.UNDERLINE + bcolors.BRIGHT_MAGENTA + 'Welcome To Hire Scope System' + bcolors.ENDC)
@@ -33,10 +32,10 @@ if typ == 'Candidate':
                     num = input()
                     match num:
                         case "1":
-                            private.edit_candidate_profile(username)
+                            functions.edit_candidate_profile(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "2":
-                            private.delete_profile(username)
+                            functions.delete_profile(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "":
                             break
@@ -57,7 +56,8 @@ if typ == 'Candidate':
             case "4":
                 functions.candidate_tools()
             case "5":
-                print("Starting personal test...")
+                functions.ask_questions()
+                functions.show_result()
                 input(bcolors.CYAN + '🔙Press enter to go back \n'+ bcolors.ENDC)
             case "6":
                 functions.chatbot_loop()
@@ -89,10 +89,10 @@ elif typ == 'Employer':
                     num = input()
                     match num:
                         case "1":
-                            private.edit_employer_profile(username)
+                            functions.edit_employer_profile(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "2":
-                            exit_p = private.delete_profile(username)
+                            exit_p = functions.delete_profile(username)
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "":
                             break
