@@ -574,3 +574,96 @@ def search_jobs():
 
     if not filtered_jobs:
         print("No jobs found matching your criteria.")
+
+traits = {
+    "analytical": 0,
+    "creative": 0,
+    "social": 0,
+    "technical": 0,
+    "practical": 0,
+    "empathetic": 0
+}
+
+professions = {
+    "Software Engineer": ["analytical", "technical"],
+    "Graphic Designer": ["creative", "practical"],
+    "Psychologist": ["empathetic", "analytical"],
+    "Teacher": ["empathetic", "social"],
+    "Engineer": ["technical", "practical"],
+    "Writer": ["creative", "analytical"],
+    "Salesperson": ["social", "practical"]
+}
+
+questions = [
+    {
+        "text": "You enjoy solving puzzles and logical problems.",
+        "trait": "analytical"
+    },
+    {
+        "text": "You like creating art, music, or stories.",
+        "trait": "creative"
+    },
+    {
+        "text": "You prefer working with others and communicating ideas.",
+        "trait": "social"
+    },
+    {
+        "text": "You enjoy working with machines or coding.",
+        "trait": "technical"
+    },
+    {
+        "text": "You like building or fixing things with your hands.",
+        "trait": "practical"
+    },
+    {
+        "text": "You often empathize deeply with others' emotions.",
+        "trait": "empathetic"
+    },
+    {
+        "text": "You enjoy planning and organizing complex tasks.",
+        "trait": "analytical"
+    },
+    {
+        "text": "You are energized by thinking outside the box.",
+        "trait": "creative"
+    },
+    {
+        "text": "You feel fulfilled when helping people directly.",
+        "trait": "empathetic"
+    },
+    {
+        "text": "You are drawn to teaching or explaining ideas to others.",
+        "trait": "social"
+    }
+]
+
+def ask_questions():
+    print("\nWelcome to the Personal Profession Finder!\n")
+    for i, q in enumerate(questions, 1):
+        while True:
+            try:
+                answer = int(input(f"{i}. {q['text']} (1=Strongly Disagree ... 5=Strongly Agree): "))
+                if 1 <= answer <= 5:
+                    traits[q["trait"]] += answer
+                    break
+                else:
+                    print("Please enter a number between 1 and 5.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+def calculate_best_profession():
+    scores = {}
+    for job, job_traits in professions.items():
+        score = sum([traits[trait] for trait in job_traits])
+        scores[job] = score
+
+    best_match = max(scores, key=scores.get)
+    return best_match, scores
+
+def show_result():
+    best, scores = calculate_best_profession()
+    print("\n--- Your Recommended Profession ---")
+    print(f"🏆 {best}\n")
+    print("Other profession scores:")
+    for job, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
+        print(f"{job}: {score}")
