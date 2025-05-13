@@ -705,7 +705,7 @@ def show_result():
 
 def change_password(username):
     users = open_file_to_read()
-    print("Verify details:")
+    print(bcolors.UNDERLINE + "\nVerify details:" + bcolors.ENDC)
     username_ = input("Enter your username: ")
 
     if username_ != username:
@@ -717,13 +717,17 @@ def change_password(username):
         print("Error!\n")
         return
     user = users[username]
-    new_password = input("Enter new password: ")
-    if len(new_password) < 8 or not(any(c.isupper() or c.lower() for c in new_password)):
-        print('The password is not strong enough(at least 8 characters and one letter)')
+    while True:
+        new_password = input("Enter new password: ")
+        if len(new_password) < 8 or not(any(c.isupper() or c.lower() for c in new_password)):
+            print('The password is not strong enough(at least 8 characters and one letter)')
+        else:
+            break
     confirm_password = input("Confirm your new password: ")
 
-
-
+    if confirm_password != new_password:
+        print('Error! those two passwords are not equal\n')
+        return
     user.password = new_password
     users[username] = user
     open_file_to_write(users)
