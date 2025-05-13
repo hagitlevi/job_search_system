@@ -1,7 +1,6 @@
 from colors import bcolors
 import functions
 import sys
-
 #The system output:
 print(bcolors.UNDERLINE + bcolors.BRIGHT_MAGENTA + 'Welcome To Hire Scope System' + bcolors.ENDC)
 while not functions.is_human_check():
@@ -62,7 +61,7 @@ if typ == 'Candidate':
                 functions.show_result()
                 input(bcolors.CYAN + '🔙Press enter to go back \n'+ bcolors.ENDC)
             case "6":
-                functions.chatbot_loop()
+                functions.chatbot_loop(typ)
                 input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
             case "7":
                 functions.contact()
@@ -84,6 +83,11 @@ elif typ == 'Employer':
         match choice:
             case "1":
                 while True:
+                    # Example of handling missing attributes during deserialization
+                    if not hasattr(obj, '_company_description'):
+                        obj._company_description = 'Here will display the company details (you can edit it in your "edit profile")'
+                    print(bcolors.BLUE + bcolors.UNDERLINE + obj.company_description  + bcolors.ENDC)
+
                     print(bcolors.CYAN + bcolors.UNDERLINE + 'Choose one of those options:' + bcolors.ENDC)
                     print(bcolors.CYAN + '1.' + bcolors.ENDC + 'Edit profile')
                     print(bcolors.CYAN + '2.' + bcolors.ENDC + 'Delete profile')

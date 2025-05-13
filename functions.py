@@ -1,10 +1,11 @@
 import json
 import os
 import sys
-from sys import flags
 
 from classes import Candidate
 from colors import bcolors
+from typing import Dict, List
+from itertools import zip_longest
 import pickle
 import classes
 import random
@@ -179,14 +180,9 @@ def generate_unique_random(min_val=1, max_val=1000000):
     raise Exception("Can not find a number in this range")
 
 def view_my_jobs(username):
-    """
-    Candidate views all available jobs in the system
-    :param username: candidate's username
-    :return: None
-    """
     jobs_dict =open_jobs_file_to_read()
-    if username not in jobs_dict:
-        print("You have not applied for any jobs.")
+    if username not in jobs_dict or not jobs_dict[username]:
+        print("You have jobs at the moment")
         return
     my_jobs = jobs_dict[username]
     while True:
@@ -332,24 +328,41 @@ def apply_for_job(filtered, user):
     return False
 
 def contact():
-    print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
+    print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.BG_BRIGHT_MAGENTA + 'hirescopeofficial@gmail.com' + bcolors.ENDC + '\n' + bcolors.BG_BRIGHT_MAGENTA + '+1 (555) 123-4567' + bcolors.ENDC + '\nWe’ll get back to you within 24 hour')
 
 common_issues = {
     "1": ("I forgot my password", "To reset your password, click 'Forgot Password' on the login screen."),
     "2": ("I can't edit my profile", "Go to 'Edit Profile' from the main menu and make sure to save your changes."),
     "3": ("I can't post a job", "Make sure all required fields are filled in the 'Post Job' form, then click for Publish."),
     "4": ("I can't see candidates", "Go to 'My Jobs' and click on 'View Candidates' for the relevant job."),
-    "5": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
+    "5": (" I want to edit my company details", "Go to 'Edit Profile' from the profile menu and update your details."),
+    "6": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
 }
 
-def show_menu():
-    print("\nHow can we help you? Please choose a number:")
-    for key, (title, _) in common_issues.items():
-        print(f"{key}. {title}")
+common_issues1 = {
+    "1": ("I forgot my password", "To reset your password, click 'Forgot Password' on the login screen."),
+    "2": ("I can't edit my profile", "Go to 'Edit Profile' from the main menu and make sure to save your changes."),
+    "3": ("I can't apply for a job", "Ensure your resume is uploaded and all required fields are filled in the application form."),
+    "4": ("I can't find jobs", "Use the 'Advanced Search' feature to filter jobs by profession, location, and type."),
+    "5": ("I want to update my resume", "Go to 'Edit Profile' and update your resume in the designated section."),
+    "6": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
+}
 
-def chatbot_loop():
+
+
+def show_menu(typ):
+    print(bcolors.CYAN + bcolors.UNDERLINE + "\nWelcome to the Help Bot!" + bcolors.ENDC)
+    print("\nHow can we help you? Please choose a number:")
+    if typ == 'Employer':
+        for key, (title, _) in common_issues.items():
+            print(f"{key}. {title}")
+    elif typ == 'Candidate':
+        for key, (title, _) in common_issues1.items():
+            print(f"{key}. {title}")
+
+def chatbot_loop(typ):
     while True:
-        show_menu()
+        show_menu(typ)
         choice = input(">> ").strip()
 
         if choice in common_issues:
@@ -469,20 +482,9 @@ def get_resume_tips():
         "4. Keep the layout clean, with a clear hierarchy of information.",
         "5. Proofread your resume to avoid any grammatical or spelling errors."
     ]
-    print("\nHere are some tips for writing your resume:")
+    print(bcolors.UNDERLINE + "\nHere are some tips for writing your resume:" + bcolors.ENDC)
     for tip in tips:
         print(tip)
-
-def view_salary_table():
-    salary_table = {
-        "Software Developer": "80,000 - 120,000 USD",
-        "Data Scientist": "70,000 - 110,000 USD",
-        "Project Manager": "60,000 - 100,000 USD",
-        "UX Designer": "50,000 - 85,000 USD"
-    }
-    print("\nSalary Range for Various Jobs:")
-    for job, salary in salary_table.items():
-        print(f"{job}: {salary}")
 
 def view_forum():
     print("\nEnter the community forum for job seekers to consult and share tips:")
@@ -491,10 +493,10 @@ def view_forum():
 def candidate_tools():
     while True:
         print(bcolors.CYAN + bcolors.UNDERLINE + "\nCandidate Tools:" + bcolors.ENDC)
-        print(bcolors.CYAN + '2.' + bcolors.ENDC + "Get Tips for Writing Your Resume")
+        print(bcolors.CYAN + '1.' + bcolors.ENDC + "Get Tips for Writing Your Resume")
         print(bcolors.CYAN + '2.' + bcolors.ENDC + "View Salary Table")
-        print(bcolors.CYAN + '2.' + bcolors.ENDC + "Visit Community Forum")
-        print(bcolors.CYAN + '2.' + bcolors.ENDC + "🔙Back")
+        print(bcolors.CYAN + '3.' + bcolors.ENDC + "Visit Community Forum")
+        print(bcolors.CYAN +'🔙Press enter to go back \n' + bcolors.ENDC)
 
         choice = input()
         match choice:
@@ -502,15 +504,15 @@ def candidate_tools():
                 get_resume_tips()
                 input(bcolors.CYAN +'🔙Press enter to go back \n'+ bcolors.ENDC)
             case "2":
-                view_salary_table()
+                salary_tables()
                 input(bcolors.CYAN +'🔙Press enter to go back \n' + bcolors.ENDC)
             case "3":
                 view_forum()
-                input(bcolors.CYAN +'🔙Press enter to go back \n' + bcolors.ENDC)
-            case "4":
+                input(bcolors.CYAN +'🔙Press enter to go back\n'+ bcolors.ENDC)
+            case "":
                 break
             case _:
-                print("Invalid choice. Please choose 1, 2, 3, or 4.")
+                print("Invalid choice. Please choose 1, 2, 3, or enter.")
 
 def search_jobs(username):
     # Read jobs from the file
@@ -609,6 +611,56 @@ def search_jobs(username):
     if int(p) == 0:
         print_user_jobs(username)
 
+def salary_tables():
+    class JobSalarySystem:
+        def __init__(self):  # Corrected constructor name
+            self.salary_data = self._load_salary_data()
+
+        def _load_salary_data(self) -> Dict[str, Dict[str, int]]:
+            return {
+                "Software Engineer": {"Junior": 85000, "Mid": 115000, "Senior": 145000},
+                "Data Scientist": {"Junior": 90000, "Mid": 120000, "Senior": 155000},
+                "UX Designer": {"Junior": 60000, "Mid": 85000, "Senior": 105000},
+                "Cybersecurity Analyst": {"Junior": 85000, "Mid": 115000, "Senior": 140000},
+                "AI Researcher": {"Junior": 100000, "Mid": 135000, "Senior": 170000},
+                "Project Manager": {"Junior": 65000, "Mid": 90000, "Senior": 120000},
+                "Mechanical Engineer": {"Junior": 60000, "Mid": 80000, "Senior": 100000},
+                "Financial Analyst": {"Junior": 70000, "Mid": 90000, "Senior": 115000},
+                "Doctor": {"Resident": 90000, "Attending": 140000, "Senior": 200000},
+                "Nurse": {"Junior": 55000, "Mid": 70000, "Senior": 85000},
+                "Graphic Designer": {"Junior": 50000, "Mid": 70000, "Senior": 90000},
+                "HR Specialist": {"Junior": 50000, "Mid": 65000, "Senior": 85000},
+                "Marketing Manager": {"Junior": 60000, "Mid": 85000, "Senior": 110000},
+                "Legal Advisor": {"Junior": 70000, "Mid": 100000, "Senior": 130000},
+                "Civil Engineer": {"Junior": 65000, "Mid": 85000, "Senior": 110000}
+            }
+
+        def _format_table(self, title: str, data: Dict[str, int]) -> List[str]:
+            lines = [f"{title:<30}", "-" * 30]
+            for level, salary in data.items():
+                lines.append(f"{level:<18} | {salary:>9,}")
+            lines.append("-" * 30)
+            return lines
+
+        def display_triple_column_salary_tables(self) -> None:
+            print("\n📊 Job Salary Tables (3 per row)")
+            print("=" * 105)
+
+            professions = list(self.salary_data.items())
+            for i in range(0, len(professions), 3):
+                left = professions[i]
+                center = professions[i + 1] if i + 1 < len(professions) else None
+                right = professions[i + 2] if i + 2 < len(professions) else None
+
+                left_lines = self._format_table(left[0], left[1])
+                center_lines = self._format_table(center[0], center[1]) if center else [""] * len(left_lines)
+                right_lines = self._format_table(right[0], right[1]) if right else [""] * len(left_lines)
+
+                for l, c, r in zip_longest(left_lines, center_lines, right_lines, fillvalue=""):
+                    print(f"{l:<35} {c:<35} {r}")
+
+    system = JobSalarySystem()
+    system.display_triple_column_salary_tables()
 
 traits = {
     "analytical": 0,
@@ -702,6 +754,14 @@ def show_result():
     print("Other profession scores:")
     for job, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
         print(f"{job}: {score}")
+    while True:
+        choice = input('would you like to take the test again? (yes/no): ')
+        if choice.lower() in ['yes', 'no']:
+            break
+        print('Invalid input. Please type "yes" or "no".')
+    if choice.lower() == 'yes':
+        ask_questions()
+        show_result()
 
 def change_password(username):
     users = open_file_to_read()
@@ -756,6 +816,10 @@ def edit_employer_profile(username):
     except ValueError:
         print("Invalid age input. Keeping current age.")
 
+    company = input('Enter your company details (press Enter to keep current): ')
+    if company:
+        employer.company_description = company
+
     print("Current password:", employer.password)
     while True:
         password = input("Enter new password. At least 8 characters and one letter(press Enter to keep current): ")
@@ -764,13 +828,21 @@ def edit_employer_profile(username):
         if len(password) >=8 and any(c.isalpha() for c in password):
             employer.password = password
             break
-
-    users[username] = employer
-    open_file_to_write(users)
-    print("Employer profile updated successfully.")
+    while True:
+        save = input('Do you want to save the changes? (yes/no): ')
+        if save.lower() in ['yes', 'no']:
+            break
+        print( 'Invalid input. Please type "yes" or "no".')
+    if save.lower() == 'yes':
+        users[username] = employer
+        open_file_to_write(users)
+        print("Employer profile updated successfully.")
+    else:
+        print("Changes not saved.")
 
 def delete_profile(username):
     users = open_file_to_read()
+    jobs = open_jobs_file_to_read()
 
     if username not in users:
         print("User not found.")
@@ -783,6 +855,9 @@ def delete_profile(username):
 
     del users[username]
     open_file_to_write(users)
+    if username in jobs:
+        del jobs[username]
+        open_jobs_file_to_write(jobs)
     print(f"Profile for '{username}' has been deleted.")
     return exit()
 

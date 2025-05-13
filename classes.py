@@ -2,12 +2,14 @@ import functions
 from colors import bcolors
 from datetime import datetime
 
+
 class Person:
     def __init__(self, user, password, full_name, age):
         self._user = user
         self._password = password
         self._full_name = full_name
         self._age = age
+
 
     def __str__(self):
         return f'Name: {self._full_name}\nAge: {self._age}'
@@ -50,6 +52,8 @@ class Employer(Person):
     def __init__(self, user, password, full_name, age):
         super().__init__(user, password, full_name, age)
         self._my_posts = []
+        self._company_description = 'Here will display the company details (you can edit it in your "edit profile")'
+
 
     def __repr__(self):
         return f'Employer(Name: {self._full_name} Age: {self._age})'
@@ -89,7 +93,7 @@ class Employer(Person):
         if not number:
             return 1
         for job in my_jobs:
-            if job.job_number == number:
+            if job.job_number == int(number):
                 flag = True
                 self._my_posts = my_jobs.remove(job)
                 break
@@ -100,6 +104,7 @@ class Employer(Person):
         dict_users[self.user] = self
         functions.open_file_to_write(dict_users)
         functions.open_jobs_file_to_write(dict_)
+        print("Job deleted successfully.")
         return True
 
     def edit_job(self):
@@ -138,9 +143,15 @@ class Employer(Person):
             job_to_edit.salary_range = new_salary_range
 
         print("Current scope (full/part time):", job_to_edit.scope_job)
-        new_scope_job = input("Enter new scope (press Enter to keep current): ")
-        if new_scope_job:
-            job_to_edit.scope_job = new_scope_job
+        print("Enter new scope (press Enter to keep current): ")
+        while True:
+            new_scope_job = input()
+            if not new_scope_job:
+                break
+            if new_scope_job.lower() in ['full time', 'part time']:
+                job_to_edit.scope_job = new_scope_job
+                break
+            print('Enter scope like that way: "full time" / "part time (press Enter to keep current)"')
 
         print("Current experience requirement:", job_to_edit.experience)
         new_experience = input("Enter new experience requirement (press Enter to keep current): ")
@@ -189,10 +200,10 @@ class Employer(Person):
                         print('Invalid option. Please choose a valid number')
                         continue
 
-                    print('choose an option:')
-                    print('1. acceptance')
-                    print('2. rejection')
-                    print('3. pending')
+                    print(bcolors.CYAN + bcolors.UNDERLINE + 'choose an option:' + bcolors.ENDC)
+                    print(bcolors.CYAN + '1.' + bcolors.ENDC + 'acceptance')
+                    print(bcolors.CYAN + '2.' + bcolors.ENDC + 'rejection')
+                    print(bcolors.CYAN + '3.' + bcolors.ENDC + 'pending')
                     while True:
                         new_status = int(input().strip())
                         if new_status in [1, 2, 3]:
@@ -236,6 +247,14 @@ class Employer(Person):
         if not isinstance(my_posts, list):
             raise ValueError("my_posts must be a list")
         self._my_posts = my_posts
+
+    @property
+    def company_description(self):
+        return self._company_description or 'No company description available.'
+
+    @company_description.setter
+    def company_description(self, company_description):
+        self._company_description = company_description
 
 class Candidate(Person):
     def __init__(self, user, password, full_name, age):
@@ -349,6 +368,10 @@ class Job:
     @description.setter
     def description(self, description):
         self._description = description
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @experience.setter
     def experience(self, experience):
