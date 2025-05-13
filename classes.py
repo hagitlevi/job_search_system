@@ -261,6 +261,7 @@ class Candidate(Person):
         super().__init__(user, password, full_name, age)
         self._resume = None
         self.applied_jobs = []
+        self.personality_test_results = {}
 
     def __repr__(self):
         return f'Candidate(Name: {self._full_name} Age: {self._age})'
@@ -304,8 +305,6 @@ class Candidate(Person):
     @resume.setter
     def resume(self, resume):
         self._resume = resume
-
-
 
 class Job:
     def __init__(self, manager, name, city, salary_range, scope_job, experience, description, date):
@@ -392,4 +391,6 @@ class Job:
     @city.setter
     def city(self, city):
         self._city = city
+
+
 

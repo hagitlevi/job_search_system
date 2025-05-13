@@ -57,8 +57,9 @@ if typ == 'Candidate':
             case "4":
                 functions.candidate_tools()
             case "5":
-                functions.ask_questions()
-                functions.show_result()
+                x = functions.ask_questions(username)
+                if x != 0:
+                    functions.show_result(username)
                 input(bcolors.CYAN + '🔙Press enter to go back \n'+ bcolors.ENDC)
             case "6":
                 functions.chatbot_loop(typ)
@@ -127,6 +128,7 @@ elif typ == 'Employer':
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "4":
                             functions.view_my_jobs(username)
+                            sys.stdin.flush()
                             input(bcolors.CYAN + '🔙Press enter to go back \n' + bcolors.ENDC)
                         case "5":
                             functions.search_jobs(username)

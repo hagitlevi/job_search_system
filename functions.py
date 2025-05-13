@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-
 from classes import Candidate
 from colors import bcolors
 from typing import Dict, List
@@ -182,7 +181,7 @@ def generate_unique_random(min_val=1, max_val=1000000):
 def view_my_jobs(username):
     jobs_dict =open_jobs_file_to_read()
     if username not in jobs_dict or not jobs_dict[username]:
-        print("You have jobs at the moment")
+        print("You dont have jobs at the moment")
         return
     my_jobs = jobs_dict[username]
     while True:
@@ -347,8 +346,6 @@ common_issues1 = {
     "5": ("I want to update my resume", "Go to 'Edit Profile' and update your resume in the designated section."),
     "6": ("Other issue", "Please contact us at support@hirescope.com and we’ll assist you as soon as possible."),
 }
-
-
 
 def show_menu(typ):
     print(bcolors.CYAN + bcolors.UNDERLINE + "\nWelcome to the Help Bot!" + bcolors.ENDC)
@@ -724,8 +721,26 @@ questions = [
     }
 ]
 
-def ask_questions():
-    print("\nWelcome to the Personal Profession Finder!\n")
+def ask_questions(username):
+    print(bcolors.CYAN + bcolors.UNDERLINE + "\nWelcome to the Personal Profession Finder!\n" + bcolors.ENDC)
+    while True:
+        choose = input('would you like to see the last results? (yes/no): ')
+        if choose.lower() in ['yes', 'no']:
+            break
+        print('Invalid input. Please type "yes" or "no".')
+    if choose.lower() == 'yes':
+        users = open_file_to_read()
+        if username in users and isinstance(users[username], Candidate):
+            candidate = users[username]
+            if candidate.personality_test_results:
+                print("Your last results:")
+                for trait, score in candidate.personality_test_results.items():
+                    print(f"{trait.capitalize()}: {score}")
+            else:
+                print("No previous results found.")
+        else:
+            print("Candidate not found.")
+        return 0
     for i, q in enumerate(questions, 1):
         while True:
             try:
@@ -747,21 +762,26 @@ def calculate_best_profession():
     best_match = max(scores, key=scores.get)
     return best_match, scores
 
-def show_result():
+def show_result(username):
     best, scores = calculate_best_profession()
     print("\n--- Your Recommended Profession ---")
     print(f"🏆 {best}\n")
     print("Other profession scores:")
     for job, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
         print(f"{job}: {score}")
+    users = open_file_to_read()
+    if username in users and isinstance(users[username], Candidate):
+        candidate = users[username]
+        candidate.personality_test_results = {"best_profession": best}
+        open_file_to_write(users)
     while True:
         choice = input('would you like to take the test again? (yes/no): ')
         if choice.lower() in ['yes', 'no']:
             break
         print('Invalid input. Please type "yes" or "no".')
     if choice.lower() == 'yes':
-        ask_questions()
-        show_result()
+        ask_questions(username)
+        show_result(username)
 
 def change_password(username):
     users = open_file_to_read()
