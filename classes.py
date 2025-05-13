@@ -38,6 +38,14 @@ class Person:
     def password(self, password):
         self._password = password
 
+    @full_name.setter
+    def full_name(self, full_name):
+        self._full_name = full_name
+
+    @age.setter
+    def age(self, age):
+        self._age = age
+
 class Employer(Person):
     def __init__(self, user, password, full_name, age):
         super().__init__(user, password, full_name, age)
@@ -275,6 +283,8 @@ class Candidate(Person):
     @resume.setter
     def resume(self, resume):
         self._resume = resume
+
+
 
 class Job:
     def __init__(self, manager, name, city, salary_range, scope_job, experience, description, date):

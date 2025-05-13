@@ -155,6 +155,7 @@ def entrance():
             print('Invalid input, Try again')
         except ValueError:
             print('Invalid input, Try again')
+
 def load_used_numbers():
     if os.path.exists('numbers.txt'):
         with open('numbers.txt', 'r') as f:
@@ -207,8 +208,6 @@ def view_my_jobs(username):
         print(f"Description: {job.description}")
         print(f"Date Posted: {job._date}")
         print("-" * 40)
-
-
 
 def check_city(city):
     text = "Afula Akko Arad Ariel Ashdod Ashkelon Bnei-Brak Bat-Yam Beersheba Beit-Shean Beit-Shemesh Beitar-Illit Bnei-Ayish Dimona Eilat Elad Givat-Shmuel Giv'atayim Hadera Haifa Harish Herzliya Holon Hoshaya Jerusalem Karmiel Kfar-Saba Kiryat-Ata Kiryat-Bialik Kiryat-Gat Kiryat-Malakhi Kiryat-Motzkin Kiryat-Ono Kiryat-Shmona Kiryat-Yam Lod Ma'alot-Tarshiha Ma'ale-Adumim Migdal-HaEmek Modiin-Illit Modiin-Maccabim-Reut Nahariya Nazareth Nazareth-Illit Ness-Ziona Netanya Netivot Ofakim Or-Akiva Or-Yehuda Petah-Tikva Raanana Ramat-Gan Ramat-Hasharon Ramla Rehovot Rishon-Lezion Rosh-HaAyin Safed Sakhnin Sderot Shoham Tamra Tayibe Tel-Aviv-Jaffa Tiberias Tirat-Carmel Umm-al-Fahm Yavne Yehud-Monosson Yokneam-Illit Zefat"
@@ -331,31 +330,6 @@ def apply_for_job(filtered, user):
 
     print("Job number not found in the system.")
     return False
-
-
-"""
-def search(filters):
-    filtered = []
-    number = 1
-    jobs = open_jobs_file_to_read()
-    
-    for user in jobs:
-        for job in jobs[user]:
-            if filters[0].lower() == 'skip' or job.name.lower() == filters[0].lower():
-                if job.scope_job.lower() == filters[1].lower():
-                    if filters[2].lower() == 'skip' or job.city.lower() == filters[2].lower():
-                        if filters[3].lower() == 'skip' or job.experience.lower() == filters[3].lower():
-                            filtered.append(job.job_number)
-                            print(f"{number}: ")
-                            job.print_details()
-                            number += 1
-
-    if number == 1:
-        print('jobs not found')
-        return 1
-    return apply_for_job(filtered)
-"""
-
 
 def contact():
     print('For technical assistance, please fill out the form below or contact us at\n' + bcolors.PINKBG + 'hirescopeofficial@gmail.com\n +1 (555) 123-4567\n' + bcolors.ENDC + '. We’ll get back to you within 24 hour')
@@ -743,12 +717,12 @@ def change_password(username):
         print("Error!\n")
         return
     user = users[username]
-    new_password = input("Enter your new password: ")
+    new_password = input("Enter new password: ")
+    if len(new_password) < 8 or not(any(c.isupper() or c.lower() for c in new_password)):
+        print('The password is not strong enough(at least 8 characters and one letter)')
     confirm_password = input("Confirm your new password: ")
 
-    if new_password != confirm_password:
-        print("Passwords do not match.")
-        return
+
 
     user.password = new_password
     users[username] = user
