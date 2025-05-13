@@ -56,6 +56,8 @@ class Employer(Person):
 
     def publish_job(self):
         dict_ = functions.open_jobs_file_to_read()
+        if self.user not in dict_:
+            dict_[self.user] = []
         self._my_posts = dict_[self.user]
         date_ = datetime.now()
         name = input('Profession name: ')
