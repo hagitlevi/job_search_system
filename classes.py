@@ -109,6 +109,9 @@ class Employer(Person):
 
     def edit_job(self):
         jobs = functions.open_jobs_file_to_read()
+        if self.user not in jobs:
+            print("You have no jobs to edit.")
+            return
         my_jobs = jobs[self.user]
         if not my_jobs:
             print("You have no jobs to edit.")
