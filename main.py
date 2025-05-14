@@ -2,11 +2,9 @@ from colors import bcolors
 import functions
 import sys
 #The system output:
-"""
 print(bcolors.UNDERLINE + bcolors.BRIGHT_MAGENTA + 'Welcome To Hire Scope System' + bcolors.ENDC)
 while not functions.is_human_check():
     continue
-"""
 typ, username = functions.entrance()
 print(bcolors.ENDC)
 jobs_dict = functions.open_jobs_file_to_read()
